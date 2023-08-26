@@ -48,7 +48,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.shabrangkala.R
-import com.example.shabrangkala.data.User
+import com.example.shabrangkala.model.data.User
 import com.example.shabrangkala.ui.theme.LiteGray
 import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.MediumGray
@@ -192,8 +192,9 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
                         userName = userName.value,
                         email = email.value,
                         phoneNumber = phoneNumber.value,
-                        password = password.value
-                    )
+                        password = password.value,
+                        listOfOrders = listOf()
+                        )
                 )
             }) {
             Text(text = "Create an account", modifier = Modifier.padding(10.dp))

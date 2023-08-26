@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.shabrangkala.ui.featurs.LogInScreen
-import com.example.shabrangkala.ui.featurs.MainScreen
+import com.example.shabrangkala.ui.featurs.mainScreen.MainScreen
 import com.example.shabrangkala.ui.featurs.OnBoardingScreen
 import com.example.shabrangkala.ui.featurs.SignUpScreen
 import com.example.shabrangkala.ui.featurs.SignUpSignInScreen

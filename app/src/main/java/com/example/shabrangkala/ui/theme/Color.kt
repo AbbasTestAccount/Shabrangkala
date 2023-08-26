@@ -8,6 +8,10 @@ val Pink80 = Color(0xFFEFB8C8)
 
 val NiceGreen = Color(0xFF5FD068)
 val LiteNiceGreen = Color(0xFFC8EBCB)
+val LiteNiceGreenWithTrans = Color(0x4DC8EBCB)
+val OnNiceGreen = Color(0xFFF2FFE4)
 
 val LiteGray = Color(0xFFDDDDDD)
 val MediumGray = Color(0xFF818181)
+
+val LiteBlue = Color(0xFF90CAF9)
