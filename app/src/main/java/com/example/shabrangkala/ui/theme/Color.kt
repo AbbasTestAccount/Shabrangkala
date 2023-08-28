@@ -15,3 +15,6 @@ val LiteGray = Color(0xFFDDDDDD)
 val MediumGray = Color(0xFF818181)
 
 val LiteBlue = Color(0xFF90CAF9)
+
+val LiteOrange = Color(0xFFFFF6D6)
+val Orange = Color(0XFFF1C93B)

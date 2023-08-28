@@ -35,7 +35,6 @@ data class Product(
     val low_stock_amount: Any,
     val manage_stock: Boolean,
     val menu_order: Int,
-    val meta_data: List<MetaData>,
     val name: String,
     val on_sale: Boolean,
     val parent_id: Int,

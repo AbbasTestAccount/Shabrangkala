@@ -1,6 +1,8 @@
 package com.example.shabrangkala.model.net
 
+import com.example.shabrangkala.model.data.category.Category
 import com.example.shabrangkala.model.data.product.Product
+import com.example.shabrangkala.model.data.tag.Tag
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -14,6 +16,11 @@ interface ApiService {
     @GET("/wp-json/wc/v3/products")
     suspend fun getAllProducts() : List<Product>
 
+    @GET("/wp-json/wc/v3/products/tags?orderby=count&order=desc&per_page=15")
+    suspend fun getPopularTags(): List<Tag>
+
+    @GET("/wp-json/wc/v3/products/categories?per_page=10&parent=0")
+    suspend fun getParentCategories() : List<Category>
 }
 
 fun createApiService(): ApiService {

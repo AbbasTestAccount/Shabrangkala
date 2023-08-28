@@ -23,9 +23,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -41,6 +43,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -52,6 +55,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -69,6 +73,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -77,17 +82,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
+import com.example.shabrangkala.ui.theme.LiteBlue
 import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreenWithTrans
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.ui.theme.OnNiceGreen
+import dev.burnoo.cokoin.navigation.getNavViewModel
+
+const val PATH = "https://www.shabrangkala.ir/wp-content/uploads/2023/05/انتقام-جویان.jpg"
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainScreen() {
+
+    val mainScreenViewModel = getNavViewModel<MainScreenViewModel>()
+
 
     val showTopBar = remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
@@ -98,6 +112,7 @@ fun MainScreen() {
         Pair("Wishlist", R.drawable.heart),
         Pair("Search", R.drawable.search)
     )
+
 
 
     Scaffold(
@@ -119,13 +134,13 @@ fun MainScreen() {
 
                     TitlePiece(title = "Popular product's tag")
 
-                    TagsChips()
+                    TagsChips(mainScreenViewModel)
 
                     Spacer(modifier = Modifier.height(30.dp))
 
                     TitlePiece(title = "Categories")
 
-                    CategoryRow("https://www.soorban.com/images/news/2022/03/1648435357_J1bW4.jpg")
+                    CategoryRow(mainScreenViewModel)
 
                     Spacer(modifier = Modifier.height(30.dp))
 
@@ -137,7 +152,12 @@ fun MainScreen() {
 
                     TitlePiece(title = "Discounts")
 
-                    CategoryRow("https://www.soorban.com/images/news/2022/03/1648435357_J1bW4.jpg")
+                    ProductRow(mainScreenViewModel)
+                    Spacer(modifier = Modifier.height(30.dp))
+
+                    TitlePiece(title = "Latest Products")
+
+                    ProductRow(mainScreenViewModel, hasDiscount = true)
                     Spacer(modifier = Modifier.height(30.dp))
 
                     //FollowOnSocialMedia()
@@ -153,8 +173,6 @@ fun MainScreen() {
                             }
                         }
                     }
-
-
                 }
             }
 
@@ -170,6 +188,113 @@ fun MainScreen() {
 
 
     }
+}
+
+@Composable
+fun ProductRow(mainScreenViewModel: MainScreenViewModel, hasDiscount: Boolean = false) {
+    LazyRow(contentPadding = PaddingValues(end = 10.dp)) {
+        items(10) {
+
+            Card(
+                colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+            ) {
+                Box(Modifier.padding(top = 25.dp, start = 20.dp)) {
+                    Card(onClick = {}, modifier = Modifier.size(width = 180.dp, height = 220.dp)) {
+                        if (mainScreenViewModel.listProductImage.value.isEmpty()) {
+                            Image(
+                                painter = painterResource(id = R.drawable.person),
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 180.dp, height = 180.dp)
+                            )
+                        } else {
+                            AsyncImage(
+                                model = mainScreenViewModel.listProductImage.value[it].images[0].src,
+//                        model = PATH ,
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 180.dp, height = 180.dp),
+                                contentScale = ContentScale.Crop,
+                                placeholder = painterResource(id = R.drawable.search),
+                                error = painterResource(id = R.drawable.heart)
+                            )
+                        }
+
+                        Box(
+                            contentAlignment = Alignment.BottomCenter,
+                            modifier = Modifier
+                                .background(
+                                    Brush.verticalGradient(
+                                        listOf(
+                                            Color(0x885FD068),
+                                            NiceGreen
+                                        )
+                                    )
+                                )
+                                .width(180.dp)
+                                .height(40.dp)
+                                .padding(end = 5.dp)
+                        ) {
+                            if (mainScreenViewModel.listProductImage.value.isNotEmpty()) {
+
+                                Text(
+                                    text = mainScreenViewModel.listProductImage.value[it].name,
+                                    color = OnNiceGreen,
+                                    style = MaterialTheme.typography.displaySmall,
+                                    modifier = Modifier.padding(bottom = 10.dp),
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            } else {
+                                Text(
+                                    text = "loading...",
+                                    color = OnNiceGreen,
+                                    style = MaterialTheme.typography.displaySmall,
+                                    modifier = Modifier.padding(bottom = 10.dp),
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            }
+
+                        }
+
+
+                    }
+
+
+
+
+
+
+                    if (hasDiscount) {
+                        Box(
+                            contentAlignment = Alignment.Center,
+                            modifier = Modifier
+                                .align(Alignment.TopStart)
+                                .padding(end = 20.dp)
+                                .offset((-20).dp, (-20).dp)
+                        ) {
+                            Icon(
+                                imageVector = ImageVector.vectorResource(id = R.drawable.discount_badge),
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 50.dp, height = 50.dp),
+                                tint = Color.Red,
+                            )
+                            Text(
+                                text = "20%",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 14.sp,
+                                color = Color.White
+
+                            )
+                        }
+                    }
+
+
+                }
+
+            }
+
+        }
+
+    }
+
 }
 
 @Composable
@@ -237,41 +362,55 @@ fun BlogRow(path: String) {
 }
 
 @Composable
-fun CategoryRow(path: String) {
+fun CategoryRow(mainScreenViewModel: MainScreenViewModel) {
     LazyRow(contentPadding = PaddingValues(start = 20.dp)) {
-        items(10) {
-            Card(onClick = {}) {
-                Box {
-                    AsyncImage(
-                        model = path,
-                        contentDescription = null,
-                        modifier = Modifier.size(width = 125.dp, height = 180.dp),
-                        contentScale = ContentScale.Crop,
-                        placeholder = painterResource(id = R.drawable.search),
-                        error = painterResource(id = R.drawable.heart)
-                    )
-                    Column(
-                        modifier = Modifier.align(Alignment.BottomStart)
-                    ) {
-                        Text(
-                            text = "title",
-                            color = OnNiceGreen,
-                            style = MaterialTheme.typography.displaySmall,
-                            modifier = Modifier.padding(start = 5.dp, bottom = 10.dp),
-                            fontWeight = FontWeight.Bold
-                        )
+        items(mainScreenViewModel.listCategory.value.size) {
 
-//                        Text(
-//                            text = "ali",
-//                            color = Color.White,
-//                            style = MaterialTheme.typography.displaySmall,
-//                            modifier = Modifier.padding(start = 5.dp)
-//                        )
+            Column() {
+                Card(onClick = {}) {
+                    Box {
+                        if (mainScreenViewModel.listProductImage.value.isEmpty()) {
+                            Image(
+                                painter = painterResource(id = R.drawable.person),
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 125.dp, height = 180.dp)
+                            )
+                        } else {
+                            AsyncImage(
+                                model = mainScreenViewModel.listCategory.value[it].image.src,
+//                        model = PATH ,
+                                contentDescription = null,
+                                modifier = Modifier.size(width = 125.dp, height = 180.dp),
+                                contentScale = ContentScale.Crop,
+                                placeholder = painterResource(id = R.drawable.search),
+                                error = painterResource(id = R.drawable.heart)
+                            )
+                        }
                     }
 
                 }
 
+                Spacer(modifier = Modifier.height(5.dp))
+
+                Text(
+                    text = mainScreenViewModel.listCategory.value[it].name,
+                    color = Color.Black,
+                    style = MaterialTheme.typography.displaySmall,
+                    modifier = Modifier
+                        .width(125.dp)
+                        .padding(bottom = 10.dp, end = 5.dp),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    lineHeight = 14.sp
+                )
+
+
             }
+
+
+
+
+
             Spacer(modifier = Modifier.width(5.dp))
 
         }
@@ -280,28 +419,41 @@ fun CategoryRow(path: String) {
 }
 
 @Composable
-fun TagsChips() {
+fun TagsChips(mainScreenViewModel: MainScreenViewModel) {
     LazyRow(
         contentPadding = PaddingValues(start = 20.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        items(20) {
-            AssistChip(
-                onClick = {},
-                label = { Text(text = it.toString()) },
-                border = AssistChipDefaults.assistChipBorder(borderColor = LiteNiceGreen),
-                modifier = Modifier
-                    .width(90.dp),
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = null
-                    )
-                },
-                colors = AssistChipDefaults.assistChipColors(containerColor = OnNiceGreen)
-            )
-            Spacer(modifier = Modifier.width(5.dp))
+        if (mainScreenViewModel.listPopularTags.value.isEmpty()) {
+            //todo
+        } else {
+            items(15) {
+
+                AssistChip(
+                    onClick = {},
+                    label = {
+                        Text(
+                            text = mainScreenViewModel.listPopularTags.value[it].name.replace(
+                                "_",
+                                " "
+                            )
+                        )
+                    },
+                    border = AssistChipDefaults.assistChipBorder(borderColor = LiteNiceGreen),
+                    modifier = Modifier
+                        .wrapContentSize(),
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = null
+                        )
+                    },
+                    colors = AssistChipDefaults.assistChipColors(containerColor = OnNiceGreen)
+                )
+                Spacer(modifier = Modifier.width(5.dp))
+            }
         }
+
 
     }
 }
@@ -448,8 +600,9 @@ fun FAB(scrollState: ScrollState, onFabClicked: () -> Unit) {
                 )
             },
             text = { Text(text = "Extended FAB") },
-
-            )
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        )
     }
 
 }
@@ -464,12 +617,12 @@ fun AppBottomBar(
     var oldValue = 0
     val closeOpenBottomBar by remember {
         derivedStateOf {
-            if (scrollState.value < scrollState.maxValue - 500){
+            if (scrollState.value < scrollState.maxValue - 500) {
                 val newValue = scrollState.value
                 val result = newValue <= oldValue
                 oldValue = newValue
                 return@derivedStateOf result
-            }else{
+            } else {
                 return@derivedStateOf false
             }
         }
