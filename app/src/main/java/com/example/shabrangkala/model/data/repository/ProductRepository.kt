@@ -11,5 +11,7 @@ interface ProductRepository {
 
     suspend fun getParentCategories() : List<Category>
 
+    suspend fun getCertainProduct(id:Int) : Product
+
 
 }

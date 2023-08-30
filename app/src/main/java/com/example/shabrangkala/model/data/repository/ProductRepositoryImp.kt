@@ -20,5 +20,9 @@ class ProductRepositoryImp(
         return apiService.getParentCategories()
     }
 
+    override suspend fun getCertainProduct(id: Int): Product {
+        return apiService.getCertainProduct(id)
+    }
+
 
 }

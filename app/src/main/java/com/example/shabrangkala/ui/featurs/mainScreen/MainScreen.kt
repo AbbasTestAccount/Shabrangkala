@@ -1,4 +1,7 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class
+)
 
 package com.example.shabrangkala.ui.featurs.mainScreen
 
@@ -10,6 +13,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -30,6 +35,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,7 +63,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -87,11 +94,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
-import com.example.shabrangkala.ui.theme.LiteBlue
 import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreenWithTrans
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.ui.theme.OnNiceGreen
+import com.example.shabrangkala.utils.PRODUCT_SCREEN
+import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
 
 const val PATH = "https://www.shabrangkala.ir/wp-content/uploads/2023/05/انتقام-جویان.jpg"
@@ -101,12 +109,15 @@ const val PATH = "https://www.shabrangkala.ir/wp-content/uploads/2023/05/انت�
 fun MainScreen() {
 
     val mainScreenViewModel = getNavViewModel<MainScreenViewModel>()
+    val navController = getNavController()
 
 
     val showTopBar = remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     val selectedItem = remember { mutableIntStateOf(0) }
+    val pagerState = rememberPagerState()
+
     val bottomList = listOf(
         Pair("Home", R.drawable.home),
         Pair("Wishlist", R.drawable.heart),
@@ -120,7 +131,7 @@ fun MainScreen() {
         floatingActionButton = { FAB(scrollState) { onFabClicked(context) } },
         bottomBar = { AppBottomBar(scrollState, selectedItem, bottomList) }) {
 
-        when (selectedItem.value) {
+        when (selectedItem.intValue) {
             0 -> {
                 showTopBar.value = true
                 Column(
@@ -146,28 +157,37 @@ fun MainScreen() {
 
                     TitlePiece(title = "Blog posts")
 
-                    BlogRow(path = "https://www.soorban.com/images/news/2022/03/1648435357_J1bW4.jpg")
+                    BlogRow(
+                        mainScreenViewModel,
+                        pagerState
+                    )
 
                     Spacer(modifier = Modifier.height(30.dp))
 
                     TitlePiece(title = "Discounts")
 
-                    ProductRow(mainScreenViewModel)
+                    ProductRow(mainScreenViewModel) { id ->
+                        navController.navigate("$PRODUCT_SCREEN/$id")
+                    }
+
                     Spacer(modifier = Modifier.height(30.dp))
 
                     TitlePiece(title = "Latest Products")
 
-                    ProductRow(mainScreenViewModel, hasDiscount = true)
+                    ProductRow(mainScreenViewModel, hasDiscount = true) {
+
+                    }
+
                     Spacer(modifier = Modifier.height(30.dp))
 
                     //FollowOnSocialMedia()
 
 
                     for (i in 0..30) {
-                        Row() {
+                        Row {
                             Spacer(modifier = Modifier.width(20.dp))
 
-                            Column() {
+                            Column {
                                 Text(text = "ali$i")
                                 Spacer(modifier = Modifier.height(20.dp))
                             }
@@ -191,7 +211,11 @@ fun MainScreen() {
 }
 
 @Composable
-fun ProductRow(mainScreenViewModel: MainScreenViewModel, hasDiscount: Boolean = false) {
+fun ProductRow(
+    mainScreenViewModel: MainScreenViewModel,
+    hasDiscount: Boolean = false,
+    onProductClicked: (Int) -> Unit
+) {
     LazyRow(contentPadding = PaddingValues(end = 10.dp)) {
         items(10) {
 
@@ -199,7 +223,10 @@ fun ProductRow(mainScreenViewModel: MainScreenViewModel, hasDiscount: Boolean = 
                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
             ) {
                 Box(Modifier.padding(top = 25.dp, start = 20.dp)) {
-                    Card(onClick = {}, modifier = Modifier.size(width = 180.dp, height = 220.dp)) {
+                    Card(
+                        onClick = { onProductClicked(mainScreenViewModel.listProductImage.value[it].id) },
+                        modifier = Modifier.size(width = 180.dp, height = 220.dp)
+                    ) {
                         if (mainScreenViewModel.listProductImage.value.isEmpty()) {
                             Image(
                                 painter = painterResource(id = R.drawable.person),
@@ -257,11 +284,6 @@ fun ProductRow(mainScreenViewModel: MainScreenViewModel, hasDiscount: Boolean = 
 
                     }
 
-
-
-
-
-
                     if (hasDiscount) {
                         Box(
                             contentAlignment = Alignment.Center,
@@ -285,16 +307,10 @@ fun ProductRow(mainScreenViewModel: MainScreenViewModel, hasDiscount: Boolean = 
                             )
                         }
                     }
-
-
                 }
-
             }
-
         }
-
     }
-
 }
 
 @Composable
@@ -304,58 +320,101 @@ fun FollowOnSocialMedia() {
 
 //TODO
 @Composable
-fun BlogRow(path: String) {
+fun BlogRow(mainScreenViewModel: MainScreenViewModel, pagerState: PagerState) {
 
     Card(
+        border = BorderStroke(0.5.dp, LiteNiceGreen),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = OnNiceGreen),
         modifier = Modifier
             .padding(horizontal = 20.dp)
-            .fillMaxWidth()
-            .height(180.dp),
-        shape = RoundedCornerShape(20.dp),
+            .height(220.dp),
         onClick = {}
     ) {
 
-        Box() {
-            AsyncImage(
-                model = path,
-                modifier = Modifier.fillMaxWidth(),
-                contentDescription = null,
-                contentScale = ContentScale.FillWidth,
-                placeholder = painterResource(id = R.drawable.search),
-                error = painterResource(id = R.drawable.heart)
-            )
 
-            IconButton(
-                onClick = {},
-                modifier = Modifier.align(Alignment.CenterStart)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back),
-                    contentDescription = "back button",
-                    modifier = Modifier
-                        .background(LiteNiceGreenWithTrans, CircleShape)
-                        .padding(5.dp)
-                        .alpha(0.6f)
-                )
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp),
+            colors = CardDefaults.cardColors(containerColor = LiteNiceGreen),
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+        ) {
+            Box {
+
+                HorizontalPager(
+                    pageCount = 2,
+                    state = pagerState
+                ) {
+                    if (mainScreenViewModel.listProductImage.value.isEmpty()) {
+
+                    } else {
+                        AsyncImage(
+                            model = mainScreenViewModel.listLastBlogPosts.value[it].yoast_head_json.og_image[0].url,
+                            modifier = Modifier.fillMaxWidth(),
+                            contentDescription = null,
+                            contentScale = ContentScale.FillWidth,
+                            placeholder = painterResource(id = R.drawable.search),
+                            error = painterResource(id = R.drawable.heart)
+                        )
+                    }
+
+                }
+
+                if (pagerState.currentPage == 0) {
+
+                } else {
+                    IconButton(
+                        onClick = {},
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.back),
+                            contentDescription = "back button",
+                            modifier = Modifier
+                                .background(LiteNiceGreenWithTrans, CircleShape)
+                                .padding(5.dp)
+                                .alpha(0.6f)
+                        )
+                    }
+                }
+
+                if (pagerState.currentPage == 1) {
+
+                } else {
+                    IconButton(
+                        onClick = {},
+                        modifier = Modifier.align(Alignment.CenterEnd)
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.back),
+                            contentDescription = "back button",
+                            modifier = Modifier
+                                .background(LiteNiceGreenWithTrans, CircleShape)
+                                .padding(5.dp)
+                                .alpha(0.6f)
+                                .rotate(180f)
+                        )
+                    }
+                }
+
+
             }
 
-            IconButton(
-                onClick = {},
-                modifier = Modifier.align(Alignment.CenterEnd)
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.back),
-                    contentDescription = "back button",
-                    modifier = Modifier
-                        .background(LiteNiceGreenWithTrans, CircleShape)
-                        .padding(5.dp)
-                        .alpha(0.6f)
-                        .rotate(180f)
-                )
-            }
 
         }
+        Spacer(modifier = Modifier.height(10.dp))
+        if (mainScreenViewModel.listLastBlogPosts.value.isEmpty()){
 
+        }else{
+            Text(
+                text = mainScreenViewModel.listLastBlogPosts.value[pagerState.currentPage].title.rendered,
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                fontWeight = FontWeight.Bold
+
+            )
+        }
 
     }
 
@@ -366,7 +425,7 @@ fun CategoryRow(mainScreenViewModel: MainScreenViewModel) {
     LazyRow(contentPadding = PaddingValues(start = 20.dp)) {
         items(mainScreenViewModel.listCategory.value.size) {
 
-            Column() {
+            Column {
                 Card(onClick = {}) {
                     Box {
                         if (mainScreenViewModel.listProductImage.value.isEmpty()) {
@@ -406,10 +465,6 @@ fun CategoryRow(mainScreenViewModel: MainScreenViewModel) {
 
 
             }
-
-
-
-
 
             Spacer(modifier = Modifier.width(5.dp))
 

@@ -14,17 +14,21 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.shabrangkala.ui.featurs.LogInScreen
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreen
 import com.example.shabrangkala.ui.featurs.OnBoardingScreen
+import com.example.shabrangkala.ui.featurs.productScreen.ProductScreen
 import com.example.shabrangkala.ui.featurs.SignUpScreen
 import com.example.shabrangkala.ui.featurs.SignUpSignInScreen
 import com.example.shabrangkala.ui.theme.ShabrangkalaTheme
 import com.example.shabrangkala.utils.LOG_IN
 import com.example.shabrangkala.utils.MAIN_SCREEN
 import com.example.shabrangkala.utils.ON_BOARDING
+import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import com.example.shabrangkala.utils.SIGN_UP
 import com.example.shabrangkala.utils.SIGN_UP_SIGN_IN
 import com.example.shabrangkala.utils.START
@@ -96,7 +100,7 @@ fun ShabrangkalaUI(mainActivityViewModel: MainActivityViewModel) {
                 LogInScreen {
                     //TODO
                     logInStatus = mainActivityViewModel.changeLogInStatus()
-                    navController.popBackStack(route = START,inclusive = true)
+                    navController.popBackStack(route = START, inclusive = true)
                     navController.navigate(MAIN_SCREEN)
 
                 }
@@ -111,7 +115,7 @@ fun ShabrangkalaUI(mainActivityViewModel: MainActivityViewModel) {
                 SignUpScreen {
                     //TODO
                     logInStatus = mainActivityViewModel.changeLogInStatus()
-                    navController.popBackStack(route = START,inclusive = true)
+                    navController.popBackStack(route = START, inclusive = true)
                     navController.navigate(MAIN_SCREEN)
                 }
             }
@@ -120,6 +124,16 @@ fun ShabrangkalaUI(mainActivityViewModel: MainActivityViewModel) {
 
         composable(route = MAIN_SCREEN) {
             MainScreen()
+        }
+
+
+        composable(
+            route = "$PRODUCT_SCREEN/{id}",
+            arguments = listOf(navArgument("id") {
+                type = NavType.IntType
+            })
+        ) {
+            ProductScreen(it.arguments!!.getInt("id", 0))
         }
     }
 
