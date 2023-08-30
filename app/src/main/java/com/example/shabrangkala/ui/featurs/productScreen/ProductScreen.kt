@@ -31,9 +31,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -240,7 +238,7 @@ fun ExpandingText(
     val text = Html.fromHtml(description, Html.FROM_HTML_MODE_LEGACY)
     Log.e("abbas", text.toString())
 
-    var expanded = remember { mutableStateOf(false) }
+    val expanded = remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
 
     Text(

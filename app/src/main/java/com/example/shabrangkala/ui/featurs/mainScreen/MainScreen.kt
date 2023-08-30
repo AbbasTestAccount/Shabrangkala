@@ -74,6 +74,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -101,6 +102,7 @@ import com.example.shabrangkala.ui.theme.OnNiceGreen
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
+import kotlinx.coroutines.launch
 
 const val PATH = "https://www.shabrangkala.ir/wp-content/uploads/2023/05/انتقام-جویان.jpg"
 
@@ -321,6 +323,8 @@ fun FollowOnSocialMedia() {
 //TODO
 @Composable
 fun BlogRow(mainScreenViewModel: MainScreenViewModel, pagerState: PagerState) {
+    val coroutineScope = rememberCoroutineScope()
+
 
     Card(
         border = BorderStroke(0.5.dp, LiteNiceGreen),
@@ -362,11 +366,15 @@ fun BlogRow(mainScreenViewModel: MainScreenViewModel, pagerState: PagerState) {
 
                 }
 
-                if (pagerState.currentPage == 0) {
+                if (!pagerState.canScrollBackward) {
 
                 } else {
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                            }
+                        },
                         modifier = Modifier.align(Alignment.CenterStart)
                     ) {
                         Image(
@@ -380,11 +388,15 @@ fun BlogRow(mainScreenViewModel: MainScreenViewModel, pagerState: PagerState) {
                     }
                 }
 
-                if (pagerState.currentPage == 1) {
+                if (!pagerState.canScrollForward) {
 
                 } else {
                     IconButton(
-                        onClick = {},
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                            }
+                        },
                         modifier = Modifier.align(Alignment.CenterEnd)
                     ) {
                         Image(
@@ -405,9 +417,9 @@ fun BlogRow(mainScreenViewModel: MainScreenViewModel, pagerState: PagerState) {
 
         }
         Spacer(modifier = Modifier.height(10.dp))
-        if (mainScreenViewModel.listLastBlogPosts.value.isEmpty()){
+        if (mainScreenViewModel.listLastBlogPosts.value.isEmpty()) {
 
-        }else{
+        } else {
             Text(
                 text = mainScreenViewModel.listLastBlogPosts.value[pagerState.currentPage].title.rendered,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
