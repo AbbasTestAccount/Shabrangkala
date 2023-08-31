@@ -6,6 +6,8 @@ val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 
+
+val HeavyGreen = Color(0xFF49A250)
 val NiceGreen = Color(0xFF5FD068)
 val LiteNiceGreen = Color(0xFFC8EBCB)
 val LiteNiceGreenWithTrans = Color(0x4DC8EBCB)

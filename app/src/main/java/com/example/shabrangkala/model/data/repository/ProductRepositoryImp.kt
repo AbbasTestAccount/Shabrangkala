@@ -24,5 +24,9 @@ class ProductRepositoryImp(
         return apiService.getCertainProduct(id)
     }
 
+    override suspend fun getProductsOfCertainCategory(id: Int): List<Product> {
+        return apiService.getProductsOfCertainCategory(id)
+    }
+
 
 }

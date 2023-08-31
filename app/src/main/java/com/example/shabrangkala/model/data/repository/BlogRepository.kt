@@ -9,4 +9,6 @@ interface BlogRepository {
 
     suspend fun getPopularBlogPosts(): List<Blog>
 
+    suspend fun getBlogPost(id : Int): Blog
+
 }

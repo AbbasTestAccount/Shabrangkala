@@ -1,6 +1,6 @@
 @file:OptIn(
     ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class
+    ExperimentalFoundationApi::class, ExperimentalLayoutApi::class
 )
 
 package com.example.shabrangkala.ui.featurs.mainScreen
@@ -22,6 +22,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -99,6 +101,7 @@ import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreenWithTrans
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.ui.theme.OnNiceGreen
+import com.example.shabrangkala.utils.BLOG_SCREEN
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
@@ -145,12 +148,6 @@ fun MainScreen() {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    TitlePiece(title = "Popular product's tag")
-
-                    TagsChips(mainScreenViewModel)
-
-                    Spacer(modifier = Modifier.height(30.dp))
-
                     TitlePiece(title = "Categories")
 
                     CategoryRow(mainScreenViewModel)
@@ -162,11 +159,14 @@ fun MainScreen() {
                     BlogRow(
                         mainScreenViewModel,
                         pagerState
-                    )
+                    ) { id ->
+                        navController.navigate("$BLOG_SCREEN/$id")
+                    }
 
                     Spacer(modifier = Modifier.height(30.dp))
 
-                    TitlePiece(title = "Discounts")
+                    TitlePiece(title = "Latest Products")
+
 
                     ProductRow(mainScreenViewModel) { id ->
                         navController.navigate("$PRODUCT_SCREEN/$id")
@@ -174,13 +174,18 @@ fun MainScreen() {
 
                     Spacer(modifier = Modifier.height(30.dp))
 
-                    TitlePiece(title = "Latest Products")
+                    TitlePiece(title = "Discounts")
 
-                    ProductRow(mainScreenViewModel, hasDiscount = true) {
 
+                    ProductRow(mainScreenViewModel, hasDiscount = true) { id ->
+                        navController.navigate("$PRODUCT_SCREEN/$id")
                     }
 
                     Spacer(modifier = Modifier.height(30.dp))
+
+                    TitlePiece(title = "Popular product's tag")
+
+                    TagsChips(mainScreenViewModel)
 
                     //FollowOnSocialMedia()
 
@@ -322,7 +327,11 @@ fun FollowOnSocialMedia() {
 
 //TODO
 @Composable
-fun BlogRow(mainScreenViewModel: MainScreenViewModel, pagerState: PagerState) {
+fun BlogRow(
+    mainScreenViewModel: MainScreenViewModel,
+    pagerState: PagerState,
+    onClicked: (Int) -> Unit
+) {
     val coroutineScope = rememberCoroutineScope()
 
 
@@ -333,7 +342,7 @@ fun BlogRow(mainScreenViewModel: MainScreenViewModel, pagerState: PagerState) {
         modifier = Modifier
             .padding(horizontal = 20.dp)
             .height(220.dp),
-        onClick = {}
+        onClick = { onClicked.invoke(mainScreenViewModel.listLastBlogPosts.value[pagerState.currentPage].id) }
     ) {
 
 
@@ -355,7 +364,7 @@ fun BlogRow(mainScreenViewModel: MainScreenViewModel, pagerState: PagerState) {
 
                     } else {
                         AsyncImage(
-                            model = mainScreenViewModel.listLastBlogPosts.value[it].yoast_head_json.og_image[0].url,
+                            model = mainScreenViewModel.listLastBlogPosts.value[it].yoast_head_json?.og_image?.get(0)?.url,
                             modifier = Modifier.fillMaxWidth(),
                             contentDescription = null,
                             contentScale = ContentScale.FillWidth,
@@ -487,14 +496,15 @@ fun CategoryRow(mainScreenViewModel: MainScreenViewModel) {
 
 @Composable
 fun TagsChips(mainScreenViewModel: MainScreenViewModel) {
-    LazyRow(
-        contentPadding = PaddingValues(start = 20.dp),
+    FlowRow(
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(horizontal = 20.dp)
     ) {
         if (mainScreenViewModel.listPopularTags.value.isEmpty()) {
             //todo
         } else {
-            items(15) {
+            for(it in 0..19) {
 
                 AssistChip(
                     onClick = {},
@@ -509,12 +519,12 @@ fun TagsChips(mainScreenViewModel: MainScreenViewModel) {
                     border = AssistChipDefaults.assistChipBorder(borderColor = LiteNiceGreen),
                     modifier = Modifier
                         .wrapContentSize(),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Done,
-                            contentDescription = null
-                        )
-                    },
+//                    leadingIcon = {
+//                        Icon(
+//                            imageVector = Icons.Default.Done,
+//                            contentDescription = null
+//                        )
+//                    },
                     colors = AssistChipDefaults.assistChipColors(containerColor = OnNiceGreen)
                 )
                 Spacer(modifier = Modifier.width(5.dp))

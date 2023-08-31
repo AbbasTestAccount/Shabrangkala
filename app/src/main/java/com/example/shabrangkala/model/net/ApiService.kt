@@ -18,7 +18,7 @@ interface ApiService {
     @GET("/wp-json/wc/v3/products")
     suspend fun getAllProducts() : List<Product>
 
-    @GET("/wp-json/wc/v3/products/tags?orderby=count&order=desc&per_page=15")
+    @GET("/wp-json/wc/v3/products/tags?orderby=count&order=desc&per_page=20")
     suspend fun getPopularTags(): List<Tag>
 
     @GET("/wp-json/wc/v3/products/categories?per_page=10&parent=0")
@@ -29,6 +29,12 @@ interface ApiService {
 
     @GET("https://shabrangkala.ir/wp-json/wp/v2/posts")
     suspend fun getLastBlogPosts() : List<Blog>
+
+    @GET("https://shabrangkala.ir/wp-json/wp/v2/posts/{id}")
+    suspend fun getBlogPost(@Path("id") blogId: Int) : Blog
+
+    @GET("https://shabrangkala.ir/wp-json/wc/v3/products?per_page=20&categoey={id}")
+    suspend fun getProductsOfCertainCategory(@Path("id") categoryId : Int) : List<Product>
 }
 
 fun createApiService(): ApiService {

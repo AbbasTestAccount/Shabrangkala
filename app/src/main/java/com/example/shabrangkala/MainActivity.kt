@@ -24,7 +24,9 @@ import com.example.shabrangkala.ui.featurs.OnBoardingScreen
 import com.example.shabrangkala.ui.featurs.productScreen.ProductScreen
 import com.example.shabrangkala.ui.featurs.SignUpScreen
 import com.example.shabrangkala.ui.featurs.SignUpSignInScreen
+import com.example.shabrangkala.ui.featurs.blogScreen.BlogScreen
 import com.example.shabrangkala.ui.theme.ShabrangkalaTheme
+import com.example.shabrangkala.utils.BLOG_SCREEN
 import com.example.shabrangkala.utils.LOG_IN
 import com.example.shabrangkala.utils.MAIN_SCREEN
 import com.example.shabrangkala.utils.ON_BOARDING
@@ -134,6 +136,15 @@ fun ShabrangkalaUI(mainActivityViewModel: MainActivityViewModel) {
             })
         ) {
             ProductScreen(it.arguments!!.getInt("id", 0))
+        }
+
+        composable(
+            route = "$BLOG_SCREEN/{id}",
+            arguments = listOf(navArgument("id"){
+                type = NavType.IntType
+            })
+        ){
+            BlogScreen(it.arguments!!.getInt("id", 0))
         }
     }
 

@@ -13,5 +13,9 @@ class BlogRepositoryImp(
         return apiService.getLastBlogPosts()
     }
 
+    override suspend fun getBlogPost(id: Int): Blog {
+        return apiService.getBlogPost(id)
+    }
+
 
 }

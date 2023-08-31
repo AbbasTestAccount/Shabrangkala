@@ -36,6 +36,14 @@ val Typography = Typography(
         letterSpacing = 0.sp
 
     ),
+    titleSmall = TextStyle(
+        fontFamily = Open_Sans,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.sp
+
+    ),
     displaySmall = TextStyle(
         fontFamily = Open_Sans,
         fontWeight = FontWeight.Normal,
