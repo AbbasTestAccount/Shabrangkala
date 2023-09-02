@@ -4,11 +4,13 @@ import com.example.shabrangkala.model.data.blog.Blog
 import com.example.shabrangkala.model.data.category.Category
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.tag.Tag
+import com.example.shabrangkala.model.data.variation.Variation
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 
 const val BASE_URL = "https://shabrangkala.ir"
@@ -27,14 +29,26 @@ interface ApiService {
     @GET("/wp-json/wc/v3/products/{id}")
     suspend fun getCertainProduct(@Path("id") productId: Int) : Product
 
-    @GET("https://shabrangkala.ir/wp-json/wp/v2/posts")
+    @GET("/wp-json/wp/v2/posts")
     suspend fun getLastBlogPosts() : List<Blog>
 
-    @GET("https://shabrangkala.ir/wp-json/wp/v2/posts/{id}")
+    @GET("/wp-json/wp/v2/posts/{id}")
     suspend fun getBlogPost(@Path("id") blogId: Int) : Blog
 
-    @GET("https://shabrangkala.ir/wp-json/wc/v3/products?per_page=20&categoey={id}")
-    suspend fun getProductsOfCertainCategory(@Path("id") categoryId : Int) : List<Product>
+
+    @GET("/wp-json/wc/v3/products")
+    suspend fun getProductsOfCertainCategory(
+        @Query("per_page") pageNum: Int = 20,
+        @Query("category") id: Int,
+        @Query("page") page: Int
+    ): List<Product>
+
+    @GET("/wp-json/wc/v3/products/{productId}/variations")
+    suspend fun getProductVariations(@Path("productId") productId: Int): List<Variation>
+
+
+    @GET("wp-json/wc/v3/products/categories/{id}")
+    suspend fun getCategoryById(@Path("id") categoryId: Int): Category
 }
 
 fun createApiService(): ApiService {

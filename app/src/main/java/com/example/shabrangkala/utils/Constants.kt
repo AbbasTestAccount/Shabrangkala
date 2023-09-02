@@ -13,6 +13,7 @@ const val MAIN_SCREEN = "mainScreen"
 const val START = "start"
 const val PRODUCT_SCREEN = "productScreen"
 const val BLOG_SCREEN = "BlogScreen"
+const val CATEGORY_LIST_SCREEN = "CategoryListScreen"
 
 
 val EMPTY_PRODUCT = Product(

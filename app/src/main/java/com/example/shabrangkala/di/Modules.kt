@@ -11,6 +11,7 @@ import com.example.shabrangkala.model.net.createApiService
 import com.example.shabrangkala.ui.featurs.LogInScreenViewModel
 import com.example.shabrangkala.ui.featurs.SignUpScreenViewModel
 import com.example.shabrangkala.ui.featurs.blogScreen.BlogScreenViewModel
+import com.example.shabrangkala.ui.featurs.categoryListScreen.CategoryScreenViewModel
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreenViewModel
 import com.example.shabrangkala.ui.featurs.productScreen.ProductScreenViewModel
 import org.koin.android.ext.koin.androidContext
@@ -39,5 +40,6 @@ val myModules = module {
     viewModel { MainScreenViewModel(get(), get()) }
     viewModel { ProductScreenViewModel(get()) }
     viewModel { BlogScreenViewModel(get())}
+    viewModel { CategoryScreenViewModel(get()) }
 
 }

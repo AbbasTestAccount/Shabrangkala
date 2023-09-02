@@ -102,6 +102,7 @@ import com.example.shabrangkala.ui.theme.LiteNiceGreenWithTrans
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.ui.theme.OnNiceGreen
 import com.example.shabrangkala.utils.BLOG_SCREEN
+import com.example.shabrangkala.utils.CATEGORY_LIST_SCREEN
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
@@ -150,7 +151,11 @@ fun MainScreen() {
 
                     TitlePiece(title = "Categories")
 
-                    CategoryRow(mainScreenViewModel)
+                    CategoryRow(mainScreenViewModel) { id ->
+                        Toast.makeText(context, id.toString(), Toast.LENGTH_SHORT).show()
+                        navController.navigate("$CATEGORY_LIST_SCREEN/$id")
+
+                    }
 
                     Spacer(modifier = Modifier.height(30.dp))
 
@@ -364,7 +369,9 @@ fun BlogRow(
 
                     } else {
                         AsyncImage(
-                            model = mainScreenViewModel.listLastBlogPosts.value[it].yoast_head_json?.og_image?.get(0)?.url,
+                            model = mainScreenViewModel.listLastBlogPosts.value[it].yoast_head_json?.og_image?.get(
+                                0
+                            )?.url,
                             modifier = Modifier.fillMaxWidth(),
                             contentDescription = null,
                             contentScale = ContentScale.FillWidth,
@@ -442,14 +449,14 @@ fun BlogRow(
 }
 
 @Composable
-fun CategoryRow(mainScreenViewModel: MainScreenViewModel) {
+fun CategoryRow(mainScreenViewModel: MainScreenViewModel, onClicked: (Int) -> Unit) {
     LazyRow(contentPadding = PaddingValues(start = 20.dp)) {
         items(mainScreenViewModel.listCategory.value.size) {
 
             Column {
-                Card(onClick = {}) {
+                Card(onClick = { onClicked.invoke(mainScreenViewModel.listCategory.value[it].id) }) {
                     Box {
-                        if (mainScreenViewModel.listProductImage.value.isEmpty()) {
+                        if (mainScreenViewModel.listCategory.value.isEmpty()) {
                             Image(
                                 painter = painterResource(id = R.drawable.person),
                                 contentDescription = null,
@@ -504,7 +511,7 @@ fun TagsChips(mainScreenViewModel: MainScreenViewModel) {
         if (mainScreenViewModel.listPopularTags.value.isEmpty()) {
             //todo
         } else {
-            for(it in 0..19) {
+            for (it in 0..19) {
 
                 AssistChip(
                     onClick = {},

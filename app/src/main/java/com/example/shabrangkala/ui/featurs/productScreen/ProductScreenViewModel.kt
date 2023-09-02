@@ -6,11 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shabrangkala.model.data.repository.ProductRepository
+import com.example.shabrangkala.model.data.variation.Variation
 import com.example.shabrangkala.utils.EMPTY_PRODUCT
 import kotlinx.coroutines.launch
 
 class ProductScreenViewModel(private val productRepository: ProductRepository) : ViewModel() {
     var productData = mutableStateOf(EMPTY_PRODUCT)
+    var productVariations = mutableStateOf<List<Variation>>(listOf())
 
 
 
@@ -24,6 +26,12 @@ class ProductScreenViewModel(private val productRepository: ProductRepository) :
 
     fun clearProductData(){
         productData = mutableStateOf(EMPTY_PRODUCT)
+    }
+
+    fun getProductVariations(id: Int){
+        viewModelScope.launch{
+            productVariations.value = productRepository.getProductVariations(id)
+        }
     }
 
 
