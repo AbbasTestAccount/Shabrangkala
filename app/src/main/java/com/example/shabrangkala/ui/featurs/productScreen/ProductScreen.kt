@@ -7,14 +7,12 @@ package com.example.shabrangkala.ui.featurs.productScreen
 
 import android.annotation.SuppressLint
 import android.text.Html
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -78,6 +76,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.shabrangkala.R
 import com.example.shabrangkala.model.data.product.Product
+import com.example.shabrangkala.ui.featurs.mainScreen.MainScreenViewModel
 import com.example.shabrangkala.ui.theme.HeavyGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreenWithTrans
@@ -93,20 +92,19 @@ fun ProductScreen(id: Int) {
 
 
     val productViewModel = getNavViewModel<ProductScreenViewModel>()
+    val mainViewModel = getNavViewModel<MainScreenViewModel>()
     val navController = getNavController()
 
     val pagerState = rememberPagerState()
 
-    var likeState by remember { mutableStateOf(false) }
+    var likeState by remember { mutableStateOf(findLikeState(mainViewModel, id)) }
 
     val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.like_animation))
     val interactionSource = remember { MutableInteractionSource() }
 
     var productCount = remember { mutableIntStateOf(0) }
 
-    productViewModel.getProductVariations(id)
-
-
+    productViewModel.loadProductVariations(id)
 
     productViewModel.loadProductData(id)
 
@@ -127,8 +125,6 @@ fun ProductScreen(id: Int) {
 
         productViewModel.clearProductData()
         isOverlayPresented = false
-
-
     }
 
     Box() {
@@ -185,7 +181,10 @@ fun ProductScreen(id: Int) {
                                     )
                                     .size(50.dp)
                                     .clickable(interactionSource = interactionSource,
-                                        indication = null, onClick = { likeState = !likeState })
+                                        indication = null, onClick = {
+                                            likeState = !likeState
+                                            productViewModel.removeProductFromWishList(productData)
+                                        })
                             )
                         } else {
                             LottieAnimation(
@@ -199,7 +198,10 @@ fun ProductScreen(id: Int) {
                                     )
                                     .size(50.dp)
                                     .clickable(interactionSource = interactionSource,
-                                        indication = null, onClick = { likeState = !likeState })
+                                        indication = null, onClick = {
+                                            likeState = !likeState
+                                            productViewModel.addProductToWishList(productData)
+                                        })
 
                             )
                         }
@@ -279,7 +281,10 @@ fun ProductScreen(id: Int) {
                             Arrangement.End
                         )
 
-                        selectedVariations.put(productData.attributes[index].name , productData.attributes[index].options[0])
+                        selectedVariations.put(
+                            productData.attributes[index].name,
+                            productData.attributes[index].options[0]
+                        )
 
                         var selectedItem = remember {
                             mutableStateOf(productData.attributes[index].options[0])
@@ -314,65 +319,67 @@ fun ProductScreen(id: Int) {
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Row(
-                modifier = Modifier
-                    .background(
-                        color = HeavyGreen,
-                        shape = RoundedCornerShape(25.dp)
-                    )
-                    .height(40.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Spacer(modifier = Modifier.width(5.dp))
+//            Row(
+//                modifier = Modifier
+//                    .background(
+//                        color = HeavyGreen,
+//                        shape = RoundedCornerShape(25.dp)
+//                    )
+//                    .height(40.dp),
+//                verticalAlignment = Alignment.CenterVertically
+//            ) {
+//                Spacer(modifier = Modifier.width(5.dp))
+//
+//                IconButton(
+//                    onClick = {
+//                        if (productCount.intValue > 0) {
+//                            productCount.intValue--
+//                        }
+//                    },
+//                    Modifier
+//                        .background(shape = CircleShape, color = Color(0x65F3F3F3))
+//                        .border(
+//                            1.dp, color = Color(
+//                                0xFFBBBBBB
+//                            ), shape = CircleShape
+//                        )
+//                        .size(30.dp)
+//                ) {
+//                    Image(
+//                        painter = painterResource(id = R.drawable.remove),
+//                        contentDescription = null
+//                    )
+//
+//                }
+//                Spacer(modifier = Modifier.width(10.dp))
+//
+//                Text(text = productCount.intValue.toString())
+//
+//                Spacer(modifier = Modifier.width(10.dp))
+//
+//
+//                IconButton(
+//                    onClick = { productCount.intValue++ },
+//                    Modifier
+//                        .background(shape = CircleShape, color = Color(0x65F3F3F3))
+//                        .border(
+//                            1.dp, color = Color(
+//                                0xFFBBBBBB
+//                            ), shape = CircleShape
+//                        )
+//                        .size(30.dp)
+//                ) {
+//                    Image(
+//                        painter = painterResource(id = R.drawable.add),
+//                        contentDescription = null
+//                    )
+//
+//                }
+//                Spacer(modifier = Modifier.width(5.dp))
+//
+//            }
 
-                IconButton(
-                    onClick = {
-                        if (productCount.intValue > 0) {
-                            productCount.intValue--
-                        }
-                    },
-                    Modifier
-                        .background(shape = CircleShape, color = Color(0x65F3F3F3))
-                        .border(
-                            1.dp, color = Color(
-                                0xFFBBBBBB
-                            ), shape = CircleShape
-                        )
-                        .size(30.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.remove),
-                        contentDescription = null
-                    )
-
-                }
-                Spacer(modifier = Modifier.width(10.dp))
-
-                Text(text = productCount.intValue.toString())
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-
-                IconButton(
-                    onClick = { productCount.intValue++ },
-                    Modifier
-                        .background(shape = CircleShape, color = Color(0x65F3F3F3))
-                        .border(
-                            1.dp, color = Color(
-                                0xFFBBBBBB
-                            ), shape = CircleShape
-                        )
-                        .size(30.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.add),
-                        contentDescription = null
-                    )
-
-                }
-                Spacer(modifier = Modifier.width(5.dp))
-
-            }
+            Text(text = "100,000 $")
 
             Button(
                 onClick = { },
@@ -496,9 +503,11 @@ fun AttributeTagsChips(
                 AssistChip(
                     onClick = {
                         selectedItem.value = productData.attributes[index].options[it]
-                        selectedVariations.put(productData.attributes[index].name , productData.attributes[index].options[it])
-                        Log.e("ABBAS11", selectedVariations.toString())
-                              },
+                        selectedVariations.put(
+                            productData.attributes[index].name,
+                            productData.attributes[index].options[it]
+                        )
+                    },
                     label = {
                         Text(
                             text = productData.attributes[index].options[it]
@@ -510,7 +519,6 @@ fun AttributeTagsChips(
                     colors = AssistChipDefaults.assistChipColors(containerColor = OnNiceGreen),
                     leadingIcon = {
                         if (selectedItem.value == productData.attributes[index].options[it]) {
-                            Log.e("ABBAS11", "AttributeTagsChips: ", )
                             Icon(
                                 imageVector = Icons.Default.Done,
                                 contentDescription = null
@@ -523,4 +531,16 @@ fun AttributeTagsChips(
             }
         }
     }
+}
+
+fun findLikeState(mainViewModel: MainScreenViewModel, id: Int): Boolean {
+    if (mainViewModel.wishListProductsId.value.isEmpty()){
+        return false
+    }
+    for (i in 0 until mainViewModel.wishListProductsId.value.size){
+        if (id == mainViewModel.wishListProductsId.value[i]){
+            return true
+        }
+    }
+    return false
 }

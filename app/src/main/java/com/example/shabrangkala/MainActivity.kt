@@ -18,6 +18,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.shabrangkala.di.myModules
 import com.example.shabrangkala.ui.featurs.LogInScreen
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreen
 import com.example.shabrangkala.ui.featurs.OnBoardingScreen
@@ -36,7 +37,9 @@ import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import com.example.shabrangkala.utils.SIGN_UP
 import com.example.shabrangkala.utils.SIGN_UP_SIGN_IN
 import com.example.shabrangkala.utils.START
+import dev.burnoo.cokoin.Koin
 import dev.burnoo.cokoin.navigation.KoinNavHost
+import org.koin.android.ext.koin.androidContext
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,19 +49,23 @@ class MainActivity : ComponentActivity() {
             MainActivityViewModel(sharedPreferences)
         setContent {
 
-            ShabrangkalaTheme {
+            Koin(appDeclaration = {
+                androidContext(this@MainActivity)
+                modules(myModules)
+            }) {
+                ShabrangkalaTheme {
 
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
 
-                    ShabrangkalaUI(mainActivityViewModel)
+                        ShabrangkalaUI(mainActivityViewModel)
 
+                    }
                 }
             }
-
 
         }
     }
@@ -142,19 +149,19 @@ fun ShabrangkalaUI(mainActivityViewModel: MainActivityViewModel) {
 
         composable(
             route = "$BLOG_SCREEN/{id}",
-            arguments = listOf(navArgument("id"){
+            arguments = listOf(navArgument("id") {
                 type = NavType.IntType
             })
-        ){
+        ) {
             BlogScreen(it.arguments!!.getInt("id", 0))
         }
 
         composable(
             route = "$CATEGORY_LIST_SCREEN/{id}",
-            arguments = listOf(navArgument("id"){
+            arguments = listOf(navArgument("id") {
                 type = NavType.IntType
             })
-        ){
+        ) {
             CategoryScreen(it.arguments!!.getInt("id", 0))
         }
     }

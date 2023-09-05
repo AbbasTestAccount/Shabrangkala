@@ -29,7 +29,7 @@ val myModules = module {
     }
 //
 //    single<UserRepository> { UserRepositoryImpl(get(), get()) }
-    single<ProductRepository> { ProductRepositoryImp(get()) }
+    single<ProductRepository> { ProductRepositoryImp(get(), get<AppDatabase>().productDao()) }
     single<BlogRepository> { BlogRepositoryImp(get()) }
 
 //    single<CommentRepository> { CommentRepositoryImpl(get()) }

@@ -1,13 +1,16 @@
 package com.example.shabrangkala.model.data.repository
 
+import com.example.shabrangkala.model.data.ProductToSaveInWishList
 import com.example.shabrangkala.model.data.category.Category
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.tag.Tag
 import com.example.shabrangkala.model.data.variation.Variation
+import com.example.shabrangkala.model.db.ProductDao
 import com.example.shabrangkala.model.net.ApiService
 
 class ProductRepositoryImp(
-    private val apiService: ApiService
+    private val apiService: ApiService,
+    private val productDao: ProductDao
 ) : ProductRepository {
     override suspend fun getAllProducts(): List<Product> {
         return apiService.getAllProducts()
@@ -35,6 +38,19 @@ class ProductRepositoryImp(
 
     override suspend fun getProductVariations(productId: Int): List<Variation> {
         return apiService.getProductVariations(productId)
+    }
+
+    override suspend fun addProductToWishList(productId: Int) {
+
+        productDao.addProductToWishList(ProductToSaveInWishList(productId))
+    }
+
+    override suspend fun removeProductFromWishList(productId: Int) {
+        productDao.deleteProductFromWishList(ProductToSaveInWishList(productId))
+    }
+
+    override suspend fun getAllWishListProducts(): List<Int> {
+        return productDao.getAllWishListProducts()
     }
 
 

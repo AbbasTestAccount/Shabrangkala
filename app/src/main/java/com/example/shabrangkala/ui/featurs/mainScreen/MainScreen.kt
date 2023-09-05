@@ -7,6 +7,9 @@ package com.example.shabrangkala.ui.featurs.mainScreen
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -18,6 +21,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +31,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,7 +51,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -95,8 +99,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
+import com.example.shabrangkala.ui.featurs.wishListScreen.WishListScreen
+import com.example.shabrangkala.ui.featurs.wishListScreen.shimmerEffect
 import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreenWithTrans
 import com.example.shabrangkala.ui.theme.NiceGreen
@@ -124,6 +131,8 @@ fun MainScreen() {
     val selectedItem = remember { mutableIntStateOf(0) }
     val pagerState = rememberPagerState()
 
+    val showEmptyProduct = remember { mutableStateOf(true) }
+
     val bottomList = listOf(
         Pair("Home", R.drawable.home),
         Pair("Wishlist", R.drawable.heart),
@@ -144,7 +153,8 @@ fun MainScreen() {
                     modifier = Modifier
                         .verticalScroll(scrollState)
                         .padding(it)
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
                     Spacer(modifier = Modifier.height(20.dp))
@@ -191,24 +201,62 @@ fun MainScreen() {
                     TitlePiece(title = "Popular product's tag")
 
                     TagsChips(mainScreenViewModel)
+                    Spacer(modifier = Modifier.height(30.dp))
 
-                    //FollowOnSocialMedia()
+
+                    FollowOnSocialMedia(context)
 
 
-                    for (i in 0..30) {
-                        Row {
-                            Spacer(modifier = Modifier.width(20.dp))
+                    Spacer(modifier = Modifier.height(100.dp))
 
-                            Column {
-                                Text(text = "ali$i")
-                                Spacer(modifier = Modifier.height(20.dp))
-                            }
-                        }
-                    }
+
+//                    for (i in 0..30) {
+//                        Row {
+//                            Spacer(modifier = Modifier.width(20.dp))
+//
+//                            Column {
+//                                Text(text = "ali$i")
+//                                Spacer(modifier = Modifier.height(20.dp))
+//                            }
+//                        }
+//                    }
                 }
             }
 
             1 -> {
+                showTopBar.value = false
+                mainScreenViewModel.getAllWishListProductsId()
+
+                if (mainScreenViewModel.wishListProductsId.value.isNotEmpty()) {
+                    mainScreenViewModel.loadWishListProductData(mainScreenViewModel.wishListProductsId.value)
+                } else {
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .padding(it)
+                    ) {
+                        Text(text = "Empty list")
+                    }
+                }
+
+                if (showEmptyProduct.value) {
+                    EmptyProductFlowRow()
+                }
+
+                if (mainScreenViewModel.wishListProducts.value.isNotEmpty()) {
+                    Log.e("testt", "MainScreen: ")
+                    showEmptyProduct.value = false
+
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .padding(it)
+                    ) {
+                        WishListScreen(mainScreenViewModel)
+
+                    }
+                }
+
 
             }
 
@@ -221,6 +269,83 @@ fun MainScreen() {
 
     }
 }
+
+@Composable
+fun EmptyProductFlowRow() {
+    Box(contentAlignment = Alignment.TopStart) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(
+                    OnNiceGreen
+                )
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 50.dp)
+        ) {
+
+
+            FlowRow(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.padding(top = 50.dp)
+            ) {
+                for (i in 0 until 6) {
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
+                    ) {
+                        Box(Modifier.padding(horizontal = 10.dp, vertical = 10.dp)) {
+                            Card(
+                                modifier = Modifier.size(width = 180.dp, height = 220.dp)
+                            ) {
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 180.dp, height = 180.dp)
+                                        .shimmerEffect()
+                                ) {
+
+                                }
+
+
+                                Box(
+                                    contentAlignment = Alignment.BottomCenter,
+                                    modifier = Modifier
+                                        .background(
+                                            Brush.verticalGradient(
+                                                listOf(
+                                                    Color(0x885FD068),
+                                                    NiceGreen
+                                                )
+                                            )
+                                        )
+                                        .width(180.dp)
+                                        .height(40.dp)
+                                        .padding(end = 5.dp)
+                                ) {
+
+                                    Text(
+                                        text = "loading...",
+                                        color = OnNiceGreen,
+                                        style = MaterialTheme.typography.displaySmall,
+                                        modifier = Modifier.padding(bottom = 10.dp),
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center,
+                                        maxLines = 1
+                                    )
+                                }
+
+
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}
+
 
 @Composable
 fun ProductRow(
@@ -326,8 +451,43 @@ fun ProductRow(
 }
 
 @Composable
-fun FollowOnSocialMedia() {
-    TODO("Not yet implemented")
+fun FollowOnSocialMedia(context: Context) {
+    TextButton(
+        onClick = {
+            val uri = Uri.parse("https://www.instagram.com/shabrangkala")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            startActivity(context, intent, null)
+        }
+    ) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .background(Color(0xFFE74C80), RoundedCornerShape(20.dp))
+                .border(
+                    2.dp, color = Color(
+                        0xFFA21142
+                    ),
+                    RoundedCornerShape(20.dp)
+                )
+                .padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.instagram),
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = Color.White
+            )
+            Text(
+                text = "Open Shabrangkala Instagram",
+                color = Color.Black,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+        }
+
+
+    }
 }
 
 //TODO
@@ -806,7 +966,12 @@ fun SearchBarSample() {
         }
 
         LazyColumn(
-            contentPadding = PaddingValues(start = 16.dp, top = 72.dp, end = 16.dp, bottom = 16.dp),
+            contentPadding = PaddingValues(
+                start = 16.dp,
+                top = 72.dp,
+                end = 16.dp,
+                bottom = 16.dp
+            ),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val list = List(100) { "Text $it" }

@@ -1,5 +1,6 @@
 package com.example.shabrangkala.model.data.repository
 
+import com.example.shabrangkala.model.data.ProductToSaveInWishList
 import com.example.shabrangkala.model.data.category.Category
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.tag.Tag
@@ -19,6 +20,12 @@ interface ProductRepository {
     suspend fun getCategoryById(id: Int) : Category
 
     suspend fun getProductVariations(productId: Int) : List<Variation>
+
+    suspend fun addProductToWishList(productId: Int)
+
+    suspend fun removeProductFromWishList(productId: Int)
+
+    suspend fun getAllWishListProducts() : List<Int>
 
 
 }

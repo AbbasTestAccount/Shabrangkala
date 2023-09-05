@@ -9,6 +9,7 @@ import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.repository.BlogRepository
 import com.example.shabrangkala.model.data.repository.ProductRepository
 import com.example.shabrangkala.model.data.tag.Tag
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
@@ -19,6 +20,8 @@ class MainScreenViewModel(
     val listPopularTags = mutableStateOf<List<Tag>>(listOf())
     val listCategory = mutableStateOf<List<Category>>(listOf())
     val listLastBlogPosts = mutableStateOf<List<Blog>>(listOf())
+    var wishListProductsId = mutableStateOf<List<Int>>(listOf())
+    var wishListProducts = mutableStateOf<List<Product>>(listOf())
 
 
 
@@ -57,11 +60,30 @@ class MainScreenViewModel(
 
 //--------------------------------------------------------------------------
 
-    private fun getLastBlogPosts(){
+    private fun getLastBlogPosts() {
         viewModelScope.launch {
             listLastBlogPosts.value = blogRepository.getPopularBlogPosts()
         }
     }
 
+    //--------------------------------------------------------------------------
+    fun getAllWishListProductsId() {
+        viewModelScope.launch(Dispatchers.IO) {
+            wishListProductsId.value = productRepository.getAllWishListProducts()
+        }
+    }
+
+    fun loadWishListProductData(listId: List<Int>) {
+        viewModelScope.launch() {
+
+            val arrayListWishList = arrayListOf<Product>()
+            for(i in 0 until listId.size){
+                 arrayListWishList.add(productRepository.getCertainProduct(listId[i]))
+            }
+
+            wishListProducts.value = arrayListWishList
+
+        }
+    }
 
 }

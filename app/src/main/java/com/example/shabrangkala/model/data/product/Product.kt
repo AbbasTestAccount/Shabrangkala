@@ -1,5 +1,7 @@
 package com.example.shabrangkala.model.data.product
 
+
+
 data class Product(
     val attributes: List<Attribute>,
     val average_rating: String,
@@ -37,13 +39,11 @@ data class Product(
     val status: String,
     val stock_status: String,
     val tags: List<Tag>,
-
     val total_sales: Int,
     val type: String,
     val upsell_ids: List<Any>,
     val variations: List<Int>,
-    val weight: String,
-
+    val weight: String
 ){
     fun isProductEmpty(): Boolean {
         return name == ""
