@@ -91,12 +91,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
@@ -124,6 +126,9 @@ fun MainScreen() {
     val mainScreenViewModel = getNavViewModel<MainScreenViewModel>()
     val navController = getNavController()
 
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val cardWidth = screenWidth / 2 - 30.dp
 
     val showTopBar = remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
@@ -183,7 +188,7 @@ fun MainScreen() {
                     TitlePiece(title = "Latest Products")
 
 
-                    ProductRow(mainScreenViewModel) { id ->
+                    ProductRow(cardWidth, mainScreenViewModel) { id ->
                         navController.navigate("$PRODUCT_SCREEN/$id")
                     }
 
@@ -192,7 +197,7 @@ fun MainScreen() {
                     TitlePiece(title = "Discounts")
 
 
-                    ProductRow(mainScreenViewModel, hasDiscount = true) { id ->
+                    ProductRow(cardWidth, mainScreenViewModel, hasDiscount = true) { id ->
                         navController.navigate("$PRODUCT_SCREEN/$id")
                     }
 
@@ -240,7 +245,7 @@ fun MainScreen() {
                 }
 
                 if (showEmptyProduct.value) {
-                    EmptyProductFlowRow()
+                    EmptyProductFlowRow(cardWidth)
                 }
 
                 if (mainScreenViewModel.wishListProducts.value.isNotEmpty()) {
@@ -271,7 +276,7 @@ fun MainScreen() {
 }
 
 @Composable
-fun EmptyProductFlowRow() {
+fun EmptyProductFlowRow(cardWidth: Dp) {
     Box(contentAlignment = Alignment.TopStart) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -296,12 +301,15 @@ fun EmptyProductFlowRow() {
                     ) {
                         Box(Modifier.padding(horizontal = 10.dp, vertical = 10.dp)) {
                             Card(
-                                modifier = Modifier.size(width = 180.dp, height = 220.dp)
+                                modifier = Modifier.size(
+                                    width = cardWidth,
+                                    height = cardWidth + 40.dp
+                                )
                             ) {
 
                                 Box(
                                     modifier = Modifier
-                                        .size(width = 180.dp, height = 180.dp)
+                                        .size(width = cardWidth, height = cardWidth)
                                         .shimmerEffect()
                                 ) {
 
@@ -319,7 +327,7 @@ fun EmptyProductFlowRow() {
                                                 )
                                             )
                                         )
-                                        .width(180.dp)
+                                        .width(cardWidth)
                                         .height(40.dp)
                                         .padding(end = 5.dp)
                                 ) {
@@ -349,6 +357,7 @@ fun EmptyProductFlowRow() {
 
 @Composable
 fun ProductRow(
+    cardWidth: Dp,
     mainScreenViewModel: MainScreenViewModel,
     hasDiscount: Boolean = false,
     onProductClicked: (Int) -> Unit
@@ -362,20 +371,20 @@ fun ProductRow(
                 Box(Modifier.padding(top = 25.dp, start = 20.dp)) {
                     Card(
                         onClick = { onProductClicked(mainScreenViewModel.listProductImage.value[it].id) },
-                        modifier = Modifier.size(width = 180.dp, height = 220.dp)
+                        modifier = Modifier.size(width = cardWidth, height = cardWidth+40.dp)
                     ) {
                         if (mainScreenViewModel.listProductImage.value.isEmpty()) {
                             Image(
                                 painter = painterResource(id = R.drawable.person),
                                 contentDescription = null,
-                                modifier = Modifier.size(width = 180.dp, height = 180.dp)
+                                modifier = Modifier.size(width = cardWidth, height = cardWidth)
                             )
                         } else {
                             AsyncImage(
                                 model = mainScreenViewModel.listProductImage.value[it].images[0].src,
 //                        model = PATH ,
                                 contentDescription = null,
-                                modifier = Modifier.size(width = 180.dp, height = 180.dp),
+                                modifier = Modifier.size(width = cardWidth, height = cardWidth),
                                 contentScale = ContentScale.Crop,
                                 placeholder = painterResource(id = R.drawable.search),
                                 error = painterResource(id = R.drawable.heart)
@@ -393,7 +402,7 @@ fun ProductRow(
                                         )
                                     )
                                 )
-                                .width(180.dp)
+                                .width(cardWidth)
                                 .height(40.dp)
                                 .padding(end = 5.dp)
                         ) {

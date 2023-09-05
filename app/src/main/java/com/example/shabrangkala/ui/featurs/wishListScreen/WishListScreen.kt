@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -73,7 +74,10 @@ fun WishListScreen(mainScreenViewModel: MainScreenViewModel) {
     val wishList = mainScreenViewModel.wishListProducts.value
 
 
-    Text(text = mainScreenViewModel.wishListProducts.value.toString())
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val cardWidth = screenWidth/2 - 30.dp
+
 
 
     Box(contentAlignment = Alignment.TopStart) {
@@ -107,14 +111,14 @@ fun WishListScreen(mainScreenViewModel: MainScreenViewModel) {
                                     onClick = {
                                         navController.navigate("$PRODUCT_SCREEN/${mainScreenViewModel.wishListProducts.value[i].id}")
                                     },
-                                    modifier = Modifier.size(width = 180.dp, height = 220.dp)
+                                    modifier = Modifier.size(width = cardWidth, height = cardWidth+40.dp)
                                 ) {
 
                                     AsyncImage(
                                         model = mainScreenViewModel.wishListProducts.value[i].images[0].src,
 //                        model = PATH ,
                                         contentDescription = null,
-                                        modifier = Modifier.size(width = 180.dp, height = 180.dp),
+                                        modifier = Modifier.size(width = cardWidth, height = cardWidth),
                                         contentScale = ContentScale.Crop,
                                         placeholder = painterResource(id = R.drawable.search),
                                         error = painterResource(id = R.drawable.heart)
@@ -132,7 +136,7 @@ fun WishListScreen(mainScreenViewModel: MainScreenViewModel) {
                                                     )
                                                 )
                                             )
-                                            .width(180.dp)
+                                            .width(cardWidth)
                                             .height(40.dp)
                                             .padding(end = 5.dp)
                                     ) {

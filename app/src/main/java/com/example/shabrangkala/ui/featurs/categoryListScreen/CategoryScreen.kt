@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +68,10 @@ fun CategoryScreen(id: Int) {
     categoryViewModel.loadProductDataOfCategory(id)
     categoryViewModel.getCategoryNameById(id)
     categoryViewModel.getProductCount(id)
+
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    val cardWidth = screenWidth/2 - 30.dp
 
 
     val productsList = categoryViewModel.productsData
@@ -116,14 +121,14 @@ fun CategoryScreen(id: Int) {
                                     onClick = {
                                         navController.navigate("$PRODUCT_SCREEN/${productsList.value[i].id}")
                                     },
-                                    modifier = Modifier.size(width = 160.dp, height = 200.dp)
+                                    modifier = Modifier.size(width = cardWidth, height = cardWidth+40.dp)
                                 ) {
 
                                     AsyncImage(
                                         model = productsList.value[i].images[0].src,
 //                        model = PATH ,
                                         contentDescription = null,
-                                        modifier = Modifier.size(width = 160.dp, height = 160.dp),
+                                        modifier = Modifier.size(width = cardWidth, height = cardWidth),
                                         contentScale = ContentScale.Crop,
                                         placeholder = painterResource(id = R.drawable.search),
                                         error = painterResource(id = R.drawable.heart)
@@ -141,7 +146,7 @@ fun CategoryScreen(id: Int) {
                                                     )
                                                 )
                                             )
-                                            .width(180.dp)
+                                            .width(cardWidth)
                                             .height(40.dp)
                                             .padding(end = 5.dp)
                                     ) {
