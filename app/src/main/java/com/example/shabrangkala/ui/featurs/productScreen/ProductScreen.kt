@@ -6,6 +6,10 @@
 package com.example.shabrangkala.ui.featurs.productScreen
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.pm.ActivityInfo
 import android.text.Html
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
@@ -50,6 +54,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -63,6 +68,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
@@ -90,6 +97,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun ProductScreen(id: Int) {
 
+    //prevent screen to rotate in Landscape view
+    val context = LocalContext.current
+    DisposableEffect(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+        val activity = context.findActivity() ?: return@DisposableEffect onDispose {}
+        val originalOrientation = activity.requestedOrientation
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        onDispose {
+            // restore original orientation when view disappears
+            activity.requestedOrientation = originalOrientation
+        }
+    }
+
 
     val productViewModel = getNavViewModel<ProductScreenViewModel>()
     val mainViewModel = getNavViewModel<MainScreenViewModel>()
@@ -107,6 +126,15 @@ fun ProductScreen(id: Int) {
     productViewModel.loadProductVariations(id)
 
     productViewModel.loadProductData(id)
+
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val cardImageHeight = if (screenHeight >= 480.dp){
+        screenHeight/3
+    }else{
+        screenHeight/2
+    }
 
     var isOverlayPresented = true
 
@@ -543,4 +571,10 @@ fun findLikeState(mainViewModel: MainScreenViewModel, id: Int): Boolean {
         }
     }
     return false
+}
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
