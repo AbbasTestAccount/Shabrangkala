@@ -10,6 +10,7 @@ import com.example.shabrangkala.model.data.repository.blogRepository.BlogReposit
 import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
 import com.example.shabrangkala.model.data.tag.Tag
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
@@ -24,46 +25,39 @@ class MainScreenViewModel(
     var wishListProducts = mutableStateOf<List<Product>>(listOf())
 
 
-
     init {
-        getPopularTags()
-        getParentCategory()
-        getProductImage()
-        getLastBlogPosts()
-
-    }
-
-
-    private fun getProductImage() {
-        viewModelScope.launch() {
-
-            listProductImage.value = productRepository.getAllProducts()
-
-        }
-
-    }
-
-    private fun getPopularTags() {
-
-        viewModelScope.launch() {
-            listPopularTags.value = productRepository.getPopularTags()
+        viewModelScope.launch(Dispatchers.IO) {
+            async { getPopularTags() }
+            async { getProductImage() }
+            async { getParentCategory() }
+            async { getLastBlogPosts() }
         }
     }
 
 
-    private fun getParentCategory() {
-        viewModelScope.launch() {
-            listCategory.value = productRepository.getParentCategories()
-        }
+    private suspend fun getProductImage() {
+
+        listProductImage.value = productRepository.getAllProducts()
+
+    }
+
+    private suspend fun getPopularTags() {
+
+        listPopularTags.value = productRepository.getPopularTags()
+
+    }
+
+
+    private suspend fun getParentCategory() {
+        listCategory.value = productRepository.getParentCategories()
     }
 
 
 //--------------------------------------------------------------------------
 
-    private fun getLastBlogPosts() {
-        viewModelScope.launch {
-            listLastBlogPosts.value = blogRepository.getPopularBlogPosts()
-        }
+    private suspend fun getLastBlogPosts() {
+        listLastBlogPosts.value = blogRepository.getPopularBlogPosts()
+
     }
 
     //--------------------------------------------------------------------------
@@ -74,11 +68,11 @@ class MainScreenViewModel(
     }
 
     fun loadWishListProductData(listId: List<Int>) {
-        viewModelScope.launch() {
+        viewModelScope.launch(Dispatchers.IO) {
 
             val arrayListWishList = arrayListOf<Product>()
-            for(i in 0 until listId.size){
-                 arrayListWishList.add(productRepository.getCertainProduct(listId[i]))
+            for (i in 0 until listId.size) {
+                arrayListWishList.add(productRepository.getCertainProduct(listId[i]))
             }
 
             wishListProducts.value = arrayListWishList
