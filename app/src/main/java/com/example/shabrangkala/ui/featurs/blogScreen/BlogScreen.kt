@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
@@ -55,6 +56,14 @@ fun BlogScreen(id: Int) {
 
     val blogViewModel = getNavViewModel<BlogScreenViewModel>()
     val navController = getNavController()
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val cardImageHeight = if (screenHeight >= 480.dp){
+        screenHeight/3
+    }else{
+        screenHeight/2
+    }
 
 
 
@@ -98,7 +107,7 @@ fun BlogScreen(id: Int) {
                 colors = CardDefaults.cardColors(containerColor = LiteNiceGreen),
                 shape = RoundedCornerShape(bottomEnd = 20.dp, bottomStart = 20.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().height(cardImageHeight)
             ) {
                 AsyncImage(
                     model = blogData.yoast_head_json?.og_image?.get(0)?.url,
