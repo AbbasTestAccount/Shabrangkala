@@ -133,7 +133,7 @@ fun MainScreen() {
     val showTopBar = remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
-    val selectedItem = remember { mutableIntStateOf(0) }
+    val selectedItem = rememberSaveable() { mutableIntStateOf(0) }
     val pagerState = rememberPagerState()
 
     val showEmptyProduct = remember { mutableStateOf(true) }
