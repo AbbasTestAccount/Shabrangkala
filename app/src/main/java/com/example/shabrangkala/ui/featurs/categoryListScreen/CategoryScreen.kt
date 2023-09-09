@@ -71,7 +71,11 @@ fun CategoryScreen(id: Int) {
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
-    val cardWidth = screenWidth/2 - 30.dp
+    val cardWidth = if (screenWidth <= 480.dp){
+         screenWidth/2 - 30.dp
+    }else{
+        screenWidth/3 - 30.dp
+    }
 
 
     val productsList = categoryViewModel.productsData
