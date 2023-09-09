@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shabrangkala.model.data.product.Product
-import com.example.shabrangkala.model.data.repository.ProductRepository
+import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
 import kotlinx.coroutines.launch
 
 class CategoryScreenViewModel(private val productRepository: ProductRepository) : ViewModel() {

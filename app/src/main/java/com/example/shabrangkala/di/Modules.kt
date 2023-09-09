@@ -2,14 +2,14 @@ package com.example.shabrangkala.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.shabrangkala.model.data.repository.BlogRepository
-import com.example.shabrangkala.model.data.repository.BlogRepositoryImp
-import com.example.shabrangkala.model.data.repository.ProductRepository
-import com.example.shabrangkala.model.data.repository.ProductRepositoryImp
+import com.example.shabrangkala.model.data.repository.blogRepository.BlogRepository
+import com.example.shabrangkala.model.data.repository.blogRepository.BlogRepositoryImp
+import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
+import com.example.shabrangkala.model.data.repository.productRepository.ProductRepositoryImp
 import com.example.shabrangkala.model.db.AppDatabase
 import com.example.shabrangkala.model.net.createApiService
-import com.example.shabrangkala.ui.featurs.LogInScreenViewModel
-import com.example.shabrangkala.ui.featurs.SignUpScreenViewModel
+import com.example.shabrangkala.ui.featurs.logInScreen.LogInScreenViewModel
+import com.example.shabrangkala.ui.featurs.signUpScreen.SignUpScreenViewModel
 import com.example.shabrangkala.ui.featurs.blogScreen.BlogScreenViewModel
 import com.example.shabrangkala.ui.featurs.categoryListScreen.CategoryScreenViewModel
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreenViewModel

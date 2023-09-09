@@ -1,13 +1,11 @@
 package com.example.shabrangkala.ui.featurs.productScreen
 
-import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shabrangkala.model.data.ProductToSaveInWishList
 import com.example.shabrangkala.model.data.product.Product
-import com.example.shabrangkala.model.data.repository.ProductRepository
+import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
 import com.example.shabrangkala.model.data.variation.Variation
 import com.example.shabrangkala.utils.EMPTY_PRODUCT
 import kotlinx.coroutines.Dispatchers

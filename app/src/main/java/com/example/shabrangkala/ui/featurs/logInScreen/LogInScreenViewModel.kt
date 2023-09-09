@@ -1,4 +1,4 @@
-package com.example.shabrangkala.ui.featurs
+package com.example.shabrangkala.ui.featurs.logInScreen
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

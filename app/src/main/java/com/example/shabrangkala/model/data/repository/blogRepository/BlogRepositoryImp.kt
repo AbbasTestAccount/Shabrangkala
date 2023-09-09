@@ -1,9 +1,6 @@
-package com.example.shabrangkala.model.data.repository
+package com.example.shabrangkala.model.data.repository.blogRepository
 
 import com.example.shabrangkala.model.data.blog.Blog
-import com.example.shabrangkala.model.data.category.Category
-import com.example.shabrangkala.model.data.product.Product
-import com.example.shabrangkala.model.data.tag.Tag
 import com.example.shabrangkala.model.net.ApiService
 
 class BlogRepositoryImp(

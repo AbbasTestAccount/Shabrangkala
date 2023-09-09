@@ -19,11 +19,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.shabrangkala.di.myModules
-import com.example.shabrangkala.ui.featurs.LogInScreen
+import com.example.shabrangkala.ui.featurs.logInScreen.LogInScreen
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreen
 import com.example.shabrangkala.ui.featurs.OnBoardingScreen
 import com.example.shabrangkala.ui.featurs.productScreen.ProductScreen
-import com.example.shabrangkala.ui.featurs.SignUpScreen
+import com.example.shabrangkala.ui.featurs.signUpScreen.SignUpScreen
 import com.example.shabrangkala.ui.featurs.SignUpSignInScreen
 import com.example.shabrangkala.ui.featurs.blogScreen.BlogScreen
 import com.example.shabrangkala.ui.featurs.categoryListScreen.CategoryScreen

@@ -12,5 +12,5 @@ data class User (
     val email: String,
     val phoneNumber: String,
     val password: String,
-    val listOfOrders: List<Product>
+    val listOfOrders: ArrayList<Product>
     )

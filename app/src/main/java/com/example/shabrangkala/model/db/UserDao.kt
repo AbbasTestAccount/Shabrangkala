@@ -13,5 +13,13 @@ import com.example.shabrangkala.model.data.User
 interface UserDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun addAddress(user: User)
+    suspend fun addAddress(user: User)
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    suspend fun saveUser(user: User)
+
+    @Delete
+    suspend fun deleteUser(user: User)
+
+
 }

@@ -5,7 +5,6 @@
 
 package com.example.shabrangkala.ui.featurs.wishListScreen
 
-import android.util.Log
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
@@ -31,7 +30,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -58,13 +56,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
-import com.example.shabrangkala.ui.featurs.categoryListScreen.PageSelect
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreenViewModel
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.ui.theme.OnNiceGreen
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import dev.burnoo.cokoin.navigation.getNavController
-import dev.burnoo.cokoin.navigation.getNavViewModel
 
 
 @Composable

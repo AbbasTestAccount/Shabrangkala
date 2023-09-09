@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 
-package com.example.shabrangkala.ui.featurs
+package com.example.shabrangkala.ui.featurs.signUpScreen
 
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -193,7 +193,7 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
                         email = email.value,
                         phoneNumber = phoneNumber.value,
                         password = password.value,
-                        listOfOrders = listOf()
+                        listOfOrders = arrayListOf()
                         )
                 )
             }) {

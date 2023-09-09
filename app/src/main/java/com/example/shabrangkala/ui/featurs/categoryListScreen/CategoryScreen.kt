@@ -138,6 +138,7 @@ fun CategoryScreen(id: Int) {
                                     Box(
                                         contentAlignment = Alignment.BottomCenter,
                                         modifier = Modifier
+                                            .width(cardWidth)
                                             .background(
                                                 Brush.verticalGradient(
                                                     listOf(
@@ -146,7 +147,6 @@ fun CategoryScreen(id: Int) {
                                                     )
                                                 )
                                             )
-                                            .width(cardWidth)
                                             .height(40.dp)
                                             .padding(end = 5.dp)
                                     ) {

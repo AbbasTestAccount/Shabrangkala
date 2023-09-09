@@ -6,8 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.shabrangkala.model.data.blog.Blog
 import com.example.shabrangkala.model.data.category.Category
 import com.example.shabrangkala.model.data.product.Product
-import com.example.shabrangkala.model.data.repository.BlogRepository
-import com.example.shabrangkala.model.data.repository.ProductRepository
+import com.example.shabrangkala.model.data.repository.blogRepository.BlogRepository
+import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
 import com.example.shabrangkala.model.data.tag.Tag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

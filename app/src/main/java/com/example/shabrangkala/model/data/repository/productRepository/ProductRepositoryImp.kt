@@ -1,4 +1,4 @@
-package com.example.shabrangkala.model.data.repository
+package com.example.shabrangkala.model.data.repository.productRepository
 
 import com.example.shabrangkala.model.data.ProductToSaveInWishList
 import com.example.shabrangkala.model.data.category.Category

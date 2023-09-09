@@ -3,7 +3,7 @@ package com.example.shabrangkala.ui.featurs.blogScreen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shabrangkala.model.data.repository.BlogRepository
+import com.example.shabrangkala.model.data.repository.blogRepository.BlogRepository
 import com.example.shabrangkala.utils.EMPTY_BLOG
 import kotlinx.coroutines.launch
 
