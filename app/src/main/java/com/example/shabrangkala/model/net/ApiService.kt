@@ -45,7 +45,7 @@ interface ApiService {
         @Query("page") page: Int
     ): List<Product>
 
-    @GET("/wp-json/wc/v3/products/{productId}/variations")
+    @GET("/wp-json/wc/v3/products/{productId}/variations?per_page=50")
     suspend fun getProductVariations(@Path("productId") productId: Int): List<Variation>
 
 

@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.text.Html
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
@@ -61,6 +62,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -102,7 +104,7 @@ fun ProductScreen(id: Int) {
     DisposableEffect(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
         val activity = context.findActivity() ?: return@DisposableEffect onDispose {}
         val originalOrientation = activity.requestedOrientation
-        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         onDispose {
             // restore original orientation when view disappears
             activity.requestedOrientation = originalOrientation
@@ -128,12 +130,13 @@ fun ProductScreen(id: Int) {
     productViewModel.loadProductData(id)
 
 
+
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-    val cardImageHeight = if (screenHeight >= 480.dp){
-        screenHeight/3
-    }else{
-        screenHeight/2
+    val cardImageHeight = if (screenHeight >= 480.dp) {
+        screenHeight / 3
+    } else {
+        screenHeight / 2
     }
 
     var isOverlayPresented = true
@@ -141,7 +144,7 @@ fun ProductScreen(id: Int) {
     val productData = productViewModel.productData.value
     val productVariations = productViewModel.productVariations.value
 
-    var selectedVariations = remember { mutableMapOf<String, String>() }
+    var selectedVariations = rememberSaveable { mutableMapOf<String, String>() }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -318,15 +321,11 @@ fun ProductScreen(id: Int) {
                             mutableStateOf(productData.attributes[index].options[0])
                         }
                         Box(modifier = Modifier.align(Alignment.End)) {
-                            AttributeTagsChips(productData, index, selectedVariations, selectedItem)
+                            AttributeTagsChips(productData, index, selectedVariations, selectedItem, productViewModel)
                         }
-
-
                     }
+//                    productViewModel.findPriceWithVariation(selectedVariations)
                 }
-
-
-
 
                 TitlePiece("Product's tags")
 
@@ -407,7 +406,8 @@ fun ProductScreen(id: Int) {
 //
 //            }
 
-            Text(text = "100,000 $")
+
+            Text(text = productViewModel.productPrice.intValue.toString())
 
             Button(
                 onClick = { },
@@ -518,7 +518,8 @@ fun AttributeTagsChips(
     productData: Product,
     index: Int,
     selectedVariations: MutableMap<String, String>,
-    selectedItem: MutableState<String>
+    selectedItem: MutableState<String>,
+    productViewModel: ProductScreenViewModel
 ) {
     FlowRow(
         horizontalArrangement = Arrangement.End,
@@ -530,11 +531,16 @@ fun AttributeTagsChips(
             for (it in 0 until productData.attributes[index].options.size) {
                 AssistChip(
                     onClick = {
+
                         selectedItem.value = productData.attributes[index].options[it]
                         selectedVariations.put(
                             productData.attributes[index].name,
                             productData.attributes[index].options[it]
                         )
+                        productViewModel.findPriceWithVariation(selectedVariations)
+
+
+                        Log.e("sallkjshkjbb", selectedVariations.toString())
                     },
                     label = {
                         Text(
@@ -562,11 +568,11 @@ fun AttributeTagsChips(
 }
 
 fun findLikeState(mainViewModel: MainScreenViewModel, id: Int): Boolean {
-    if (mainViewModel.wishListProductsId.value.isEmpty()){
+    if (mainViewModel.wishListProductsId.value.isEmpty()) {
         return false
     }
-    for (i in 0 until mainViewModel.wishListProductsId.value.size){
-        if (id == mainViewModel.wishListProductsId.value[i]){
+    for (i in 0 until mainViewModel.wishListProductsId.value.size) {
+        if (id == mainViewModel.wishListProductsId.value[i]) {
             return true
         }
     }

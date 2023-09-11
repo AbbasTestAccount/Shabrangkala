@@ -11,6 +11,7 @@ import com.example.shabrangkala.model.net.createApiService
 import com.example.shabrangkala.ui.featurs.logInScreen.LogInScreenViewModel
 import com.example.shabrangkala.ui.featurs.signUpScreen.SignUpScreenViewModel
 import com.example.shabrangkala.ui.featurs.blogScreen.BlogScreenViewModel
+import com.example.shabrangkala.ui.featurs.cartScreen.CartScreenViewModel
 import com.example.shabrangkala.ui.featurs.categoryListScreen.CategoryScreenViewModel
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreenViewModel
 import com.example.shabrangkala.ui.featurs.productScreen.ProductScreenViewModel
@@ -41,5 +42,6 @@ val myModules = module {
     viewModel { ProductScreenViewModel(get()) }
     viewModel { BlogScreenViewModel(get())}
     viewModel { CategoryScreenViewModel(get()) }
+    viewModel { CartScreenViewModel(get())}
 
 }

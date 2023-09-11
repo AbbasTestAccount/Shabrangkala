@@ -1,5 +1,6 @@
 package com.example.shabrangkala.ui.featurs.productScreen
 
+import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -27,6 +28,7 @@ class ProductScreenViewModel(private val productRepository: ProductRepository) :
 
     fun clearProductData() {
         productData = mutableStateOf(EMPTY_PRODUCT)
+        productPrice = mutableIntStateOf(0)
     }
 
     fun loadProductVariations(id: Int) {
@@ -36,33 +38,36 @@ class ProductScreenViewModel(private val productRepository: ProductRepository) :
     }
 
     fun addProductToWishList(product: Product) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             productRepository.addProductToWishList(product.id)
         }
     }
 
     fun removeProductFromWishList(product: Product) {
-        viewModelScope.launch(Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             productRepository.removeProductFromWishList(product.id)
         }
     }
 
 
+    fun findPriceWithVariation(selectedVariations: MutableMap<String, String>) {
+        for (i in 0 until productVariations.value.size) {
+            var flag = true
+            for (j in 0 until productVariations.value[i].attributes.size) {
+                selectedVariations.forEach { (key, value) ->
+                    Log.e("sallkjshkjbb", "i = $i, j = $j \n"+ productVariations.value[i].attributes[j].name + "\n" + productVariations.value[i].attributes[j].option )
+                    if (key == productVariations.value[i].attributes[j].name && value != productVariations.value[i].attributes[j].option) {
+                        flag = false
 
-//    fun findPriceWithVariation() {
-//        for (i in 0 until productVariations.value.size) {
-//            for (j in 0 until productData.value.attributes.size) {
-//                for (k in 0 until productVariations.value[i].attributes.size) {
-//                    if (productVariations.value[i].attributes[k].id != productData.value.attributes[j].id){
-//                        continue
-//                    }else if (productVariations.value[i].attributes[k].option == productData.value.attributes[j].)
-//
-//                }
-//            }
-//        }
-//
-//
-//    }
+                    }
+                }
+                if (flag) {
+                    productPrice.intValue = productVariations.value[i].price.toInt()
+                    Log.e("sallkjshkjbb", "oomad in ja")
 
-
+                    return
+                }
+            }
+        }
+    }
 }

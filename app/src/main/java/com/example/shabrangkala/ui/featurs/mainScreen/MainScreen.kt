@@ -50,7 +50,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -102,6 +101,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
 import com.example.shabrangkala.ui.featurs.wishListScreen.WishListScreen
@@ -111,6 +111,7 @@ import com.example.shabrangkala.ui.theme.LiteNiceGreenWithTrans
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.ui.theme.OnNiceGreen
 import com.example.shabrangkala.utils.BLOG_SCREEN
+import com.example.shabrangkala.utils.CART_SCREEN
 import com.example.shabrangkala.utils.CATEGORY_LIST_SCREEN
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import dev.burnoo.cokoin.navigation.getNavController
@@ -147,7 +148,7 @@ fun MainScreen() {
 
 
     Scaffold(
-        topBar = { AppTopAppBar(showTopBar, scrollState) },
+        topBar = { AppTopAppBar(showTopBar, scrollState, navController) },
         floatingActionButton = { FAB(scrollState) { onFabClicked(context) } },
         bottomBar = { AppBottomBar(scrollState, selectedItem, bottomList) }) {
 
@@ -747,7 +748,11 @@ fun onFabClicked(context: Context) {
 
 
 @Composable
-fun AppTopAppBar(showTopBar: MutableState<Boolean>, scrollState: ScrollState) {
+fun AppTopAppBar(
+    showTopBar: MutableState<Boolean>,
+    scrollState: ScrollState,
+    navController: NavHostController
+) {
 
     if (showTopBar.value) {
         var oldValue = 0
@@ -775,7 +780,7 @@ fun AppTopAppBar(showTopBar: MutableState<Boolean>, scrollState: ScrollState) {
                     )
                     {
 
-                        IconButton(onClick = { /*TODO*/ }) {
+                        IconButton(onClick = { }) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.question),
                                 contentDescription = null,
@@ -796,13 +801,13 @@ fun AppTopAppBar(showTopBar: MutableState<Boolean>, scrollState: ScrollState) {
                         )
 
                         Row {
-                            IconButton(onClick = { /*TODO*/ }) {
+                            IconButton(onClick = {  navController.navigate(CART_SCREEN) }) {
                                 Icon(
-                                    imageVector = Icons.Default.AccountCircle,
+                                    painter = painterResource(id = R.drawable.shopping),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(30.dp),
-                                    tint = Color.Black
+                                        .size(25.dp).background(Color.Black, CircleShape).padding(3.dp),
+                                    tint = NiceGreen
                                 )
                             }
 
