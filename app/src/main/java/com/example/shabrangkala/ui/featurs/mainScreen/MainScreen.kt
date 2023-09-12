@@ -684,23 +684,12 @@ fun EmptyBlogRow() {
     ) {
 
 
-        Card(
-            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
-                .shimmerEffect(),
+                .shimmerEffect()
         ) {
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .shimmerEffect()
-            ) {
-
-            }
-
 
         }
         Spacer(modifier = Modifier.height(10.dp))
