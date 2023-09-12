@@ -13,7 +13,7 @@ class CartScreenViewModel(private val productRepository: ProductRepository) : Vi
     var productVariations = mutableStateOf<List<Variation>>(listOf())
     var productPrice = mutableIntStateOf(0)
 
-    val list = mutableStateListOf("sad", "sasasa", "sasa", "sasas")
+    val list = mutableStateListOf("sad", "sasasa", "saasa", "saassas", "sadq", "sasasra", "sasua", "sasans", "sadv", "sas5asa", "sa7sa", "sas3as")
 
 
 
