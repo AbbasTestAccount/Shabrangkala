@@ -9,6 +9,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -165,7 +166,7 @@ fun MainScreen() {
 
                     Spacer(modifier = Modifier.height(20.dp))
 
-                    TitlePiece(title = "Categories")
+                    TitlePiece(title = "دسته بندی محصولات")
 
                     CategoryRow(mainScreenViewModel) { id ->
                         Toast.makeText(context, id.toString(), Toast.LENGTH_SHORT).show()
@@ -175,7 +176,7 @@ fun MainScreen() {
 
                     Spacer(modifier = Modifier.height(30.dp))
 
-                    TitlePiece(title = "Blog posts")
+                    TitlePiece(title = "پست های بلاگ")
 
                     BlogRow(
                         mainScreenViewModel,
@@ -186,7 +187,7 @@ fun MainScreen() {
 
                     Spacer(modifier = Modifier.height(30.dp))
 
-                    TitlePiece(title = "Latest Products")
+                    TitlePiece(title = "آخرین محصولات")
 
 
                     ProductRow(cardWidth, mainScreenViewModel) { id ->
@@ -195,7 +196,7 @@ fun MainScreen() {
 
                     Spacer(modifier = Modifier.height(30.dp))
 
-                    TitlePiece(title = "Discounts")
+                    TitlePiece(title = "تخفیف ها")
 
 
                     ProductRow(cardWidth, mainScreenViewModel, hasDiscount = true) { id ->
@@ -204,7 +205,7 @@ fun MainScreen() {
 
                     Spacer(modifier = Modifier.height(30.dp))
 
-                    TitlePiece(title = "Popular product's tag")
+                    TitlePiece(title = "محبوب ترین تگ ها")
 
                     TagsChips(mainScreenViewModel)
                     Spacer(modifier = Modifier.height(30.dp))
@@ -357,7 +358,7 @@ fun ProductRow(
     hasDiscount: Boolean = false,
     onProductClicked: (Int) -> Unit
 ) {
-    LazyRow(contentPadding = PaddingValues(end = 10.dp)) {
+    LazyRow(contentPadding = PaddingValues(end = 20.dp), reverseLayout = true) {
         val count = if (hasDiscount) 4 else 10
         items(count) {
 
@@ -501,7 +502,7 @@ fun ProductRow(
 fun changeText(title: String): String {
     val title2 = if (title.contains("مجموعه")) {
         title.substring(7)
-    }else{
+    } else {
         title
     }
     return if (title2.length > 23) {
@@ -561,35 +562,34 @@ fun BlogRow(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-
-    Card(
-        border = BorderStroke(0.5.dp, LiteNiceGreen),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = OnNiceGreen),
-        modifier = Modifier
-            .padding(horizontal = 20.dp)
-            .height(220.dp),
-        onClick = { onClicked.invoke(mainScreenViewModel.listLastBlogPosts.value[pagerState.currentPage].id) }
-    ) {
-
-
+    if (mainScreenViewModel.listLastBlogPosts.value.isEmpty()) {
+        EmptyBlogRow()
+        Log.e("askjakjjs", "tesssssssssssssst" )
+    } else {
         Card(
+            border = BorderStroke(0.5.dp, LiteNiceGreen),
+            shape = RoundedCornerShape(20.dp),
+            colors = CardDefaults.cardColors(containerColor = OnNiceGreen),
             modifier = Modifier
-                .fillMaxWidth()
-                .height(180.dp),
-            colors = CardDefaults.cardColors(containerColor = LiteNiceGreen),
-            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+                .padding(horizontal = 20.dp)
+                .height(220.dp),
+            onClick = { onClicked.invoke(mainScreenViewModel.listLastBlogPosts.value[pagerState.currentPage].id) }
         ) {
-            Box {
 
-                HorizontalPager(
-                    pageCount = 2,
-                    state = pagerState
-                ) {
-                    if (mainScreenViewModel.listProduct.value.isEmpty()) {
 
-                    } else {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(180.dp),
+                colors = CardDefaults.cardColors(containerColor = LiteNiceGreen),
+                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+            ) {
+                Box {
+                    HorizontalPager(
+                        pageCount = 2,
+                        state = pagerState
+                    ) {
                         AsyncImage(
                             model = mainScreenViewModel.listLastBlogPosts.value[it].yoast_head_json?.og_image?.get(
                                 0
@@ -600,100 +600,187 @@ fun BlogRow(
                             placeholder = painterResource(id = R.drawable.search),
                             error = painterResource(id = R.drawable.heart)
                         )
+
+
                     }
+
+                    if (!pagerState.canScrollBackward) {
+
+                    } else {
+                        IconButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage - 1)
+                                }
+                            },
+                            modifier = Modifier.align(Alignment.CenterStart)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.back),
+                                contentDescription = "back button",
+                                modifier = Modifier
+                                    .background(LiteNiceGreenWithTrans, CircleShape)
+                                    .padding(5.dp)
+                                    .alpha(0.6f)
+                            )
+                        }
+                    }
+
+                    if (!pagerState.canScrollForward) {
+
+                    } else {
+                        IconButton(
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                                }
+                            },
+                            modifier = Modifier.align(Alignment.CenterEnd)
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.back),
+                                contentDescription = "back button",
+                                modifier = Modifier
+                                    .background(LiteNiceGreenWithTrans, CircleShape)
+                                    .padding(5.dp)
+                                    .alpha(0.6f)
+                                    .rotate(180f)
+                            )
+                        }
+                    }
+
 
                 }
 
-                if (!pagerState.canScrollBackward) {
 
-                } else {
-                    IconButton(
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage - 1)
-                            }
-                        },
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.back),
-                            contentDescription = "back button",
-                            modifier = Modifier
-                                .background(LiteNiceGreenWithTrans, CircleShape)
-                                .padding(5.dp)
-                                .alpha(0.6f)
-                        )
-                    }
-                }
+            }
+            Spacer(modifier = Modifier.height(10.dp))
+            if (mainScreenViewModel.listLastBlogPosts.value.isEmpty()) {
 
-                if (!pagerState.canScrollForward) {
+            } else {
+                Text(
+                    text = mainScreenViewModel.listLastBlogPosts.value[pagerState.currentPage].title.rendered,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    fontWeight = FontWeight.Bold
 
-                } else {
-                    IconButton(
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                            }
-                        },
-                        modifier = Modifier.align(Alignment.CenterEnd)
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.back),
-                            contentDescription = "back button",
-                            modifier = Modifier
-                                .background(LiteNiceGreenWithTrans, CircleShape)
-                                .padding(5.dp)
-                                .alpha(0.6f)
-                                .rotate(180f)
-                        )
-                    }
-                }
+                )
+            }
 
+        }
+    }
+
+
+}
+
+@Composable
+fun EmptyBlogRow() {
+    Card(
+        border = BorderStroke(0.5.dp, LiteNiceGreen),
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
+            .height(220.dp)
+
+    ) {
+
+
+        Card(
+            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .shimmerEffect(),
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .shimmerEffect()
+            ) {
 
             }
 
 
         }
         Spacer(modifier = Modifier.height(10.dp))
-        if (mainScreenViewModel.listLastBlogPosts.value.isEmpty()) {
 
-        } else {
-            Text(
-                text = mainScreenViewModel.listLastBlogPosts.value[pagerState.currentPage].title.rendered,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                fontWeight = FontWeight.Bold
+        Text(
+            text = "loading...",
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            fontWeight = FontWeight.Bold
 
-            )
+        )
+
+
+    }
+}
+
+@Composable
+fun CategoryRow(mainScreenViewModel: MainScreenViewModel, onClicked: (Int) -> Unit) {
+    if (mainScreenViewModel.listCategory.value.isEmpty()) {
+        EmptyCategoryRow()
+    } else {
+        LazyRow(contentPadding = PaddingValues(end = 20.dp, start = 10.dp), reverseLayout = true) {
+            items(mainScreenViewModel.listCategory.value.size) {
+
+                Column {
+                    Card(onClick = { onClicked.invoke(mainScreenViewModel.listCategory.value[it].id) }) {
+
+                        AsyncImage(
+                            model = mainScreenViewModel.listCategory.value[it].image.src,
+//                        model = PATH ,
+                            contentDescription = null,
+                            modifier = Modifier.size(width = 125.dp, height = 180.dp),
+                            contentScale = ContentScale.Crop,
+                            placeholder = painterResource(id = R.drawable.search),
+                            error = painterResource(id = R.drawable.heart)
+                        )
+
+                    }
+
+
+
+                    Spacer(modifier = Modifier.height(5.dp))
+
+                    Text(
+                        text = mainScreenViewModel.listCategory.value[it].name,
+                        color = Color.Black,
+                        style = MaterialTheme.typography.displaySmall,
+                        modifier = Modifier
+                            .width(125.dp)
+                            .padding(bottom = 10.dp, end = 5.dp),
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 14.sp
+                    )
+
+
+                }
+
+                Spacer(modifier = Modifier.width(5.dp))
+
+            }
+
         }
-
     }
 
 }
 
 @Composable
-fun CategoryRow(mainScreenViewModel: MainScreenViewModel, onClicked: (Int) -> Unit) {
-    LazyRow(contentPadding = PaddingValues(start = 20.dp)) {
-        items(mainScreenViewModel.listCategory.value.size) {
+fun EmptyCategoryRow() {
+    LazyRow(contentPadding = PaddingValues(end = 20.dp, start = 10.dp), reverseLayout = true) {
+        items(3) {
 
             Column {
-                Card(onClick = { onClicked.invoke(mainScreenViewModel.listCategory.value[it].id) }) {
+                Card() {
                     Box {
-                        if (mainScreenViewModel.listCategory.value.isEmpty()) {
-                            Image(
-                                painter = painterResource(id = R.drawable.person),
-                                contentDescription = null,
-                                modifier = Modifier.size(width = 125.dp, height = 180.dp)
-                            )
-                        } else {
-                            AsyncImage(
-                                model = mainScreenViewModel.listCategory.value[it].image.src,
-//                        model = PATH ,
-                                contentDescription = null,
-                                modifier = Modifier.size(width = 125.dp, height = 180.dp),
-                                contentScale = ContentScale.Crop,
-                                placeholder = painterResource(id = R.drawable.search),
-                                error = painterResource(id = R.drawable.heart)
-                            )
+                        Box(
+                            modifier = Modifier
+                                .size(width = 125.dp, height = 180.dp)
+                                .shimmerEffect()
+                        ) {
+
                         }
                     }
 
@@ -702,7 +789,7 @@ fun CategoryRow(mainScreenViewModel: MainScreenViewModel, onClicked: (Int) -> Un
                 Spacer(modifier = Modifier.height(5.dp))
 
                 Text(
-                    text = mainScreenViewModel.listCategory.value[it].name,
+                    text = "loading...",
                     color = Color.Black,
                     style = MaterialTheme.typography.displaySmall,
                     modifier = Modifier
@@ -777,17 +864,19 @@ fun TitlePiece(title: String) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
+            TextButton(onClick = {}) {
+                Text(
+                    text = "...بیشتر",
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(end = 30.dp)
             )
-
-            TextButton(onClick = {}, Modifier.padding(end = 30.dp)) {
-                Text(
-                    text = "more...",
-                    style = MaterialTheme.typography.labelSmall,
-                )
-            }
         }
 
 
@@ -911,7 +1000,7 @@ fun FAB(scrollState: ScrollState, onFabClicked: () -> Unit) {
                     modifier = Modifier.size(24.dp)
                 )
             },
-            text = { Text(text = "Extended FAB") },
+            text = { Text(text = "مشاهده سبد خرید", fontWeight = FontWeight.Bold) },
             containerColor = MaterialTheme.colorScheme.secondary,
             contentColor = MaterialTheme.colorScheme.onSecondary
         )
