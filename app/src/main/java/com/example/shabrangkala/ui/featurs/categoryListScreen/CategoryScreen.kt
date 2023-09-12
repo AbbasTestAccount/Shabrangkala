@@ -34,6 +34,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -49,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
+import com.example.shabrangkala.ui.featurs.mainScreen.EmptyProductFlowRow
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.ui.theme.OnNiceGreen
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
@@ -62,6 +65,8 @@ fun CategoryScreen(id: Int) {
 
     val categoryViewModel = getNavViewModel<CategoryScreenViewModel>()
     val navController = getNavController()
+
+    val showEmptyCategory = remember { mutableStateOf(true) }
 
 
 
@@ -107,8 +112,7 @@ fun CategoryScreen(id: Int) {
         ) {
 
             if (productsList.value.isEmpty()) {
-                Text(text = "sdkalhghjksd")
-
+                EmptyProductFlowRow(cardWidth)
             } else {
 
 

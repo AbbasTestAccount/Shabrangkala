@@ -9,7 +9,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -137,7 +136,8 @@ fun MainScreen() {
     val selectedItem = rememberSaveable() { mutableIntStateOf(0) }
     val pagerState = rememberPagerState()
 
-    val showEmptyProduct = remember { mutableStateOf(true) }
+    val showEmptyWishListProduct = remember { mutableStateOf(true) }
+
 
     val bottomList = listOf(
         Pair("Home", R.drawable.home),
@@ -245,13 +245,12 @@ fun MainScreen() {
                     }
                 }
 
-                if (showEmptyProduct.value) {
+                if (showEmptyWishListProduct.value) {
                     EmptyProductFlowRow(cardWidth)
                 }
 
                 if (mainScreenViewModel.wishListProducts.value.isNotEmpty()) {
-                    Log.e("testt", "MainScreen: ")
-                    showEmptyProduct.value = false
+                    showEmptyWishListProduct.value = false
 
                     Box(
                         contentAlignment = Alignment.Center,
@@ -259,7 +258,6 @@ fun MainScreen() {
                             .padding(it)
                     ) {
                         WishListScreen(mainScreenViewModel)
-
                     }
                 }
 
@@ -287,7 +285,6 @@ fun EmptyProductFlowRow(cardWidth: Dp) {
                 .background(
                     OnNiceGreen
                 )
-                .verticalScroll(rememberScrollState())
                 .padding(bottom = 50.dp)
         ) {
 
@@ -343,14 +340,11 @@ fun EmptyProductFlowRow(cardWidth: Dp) {
                                         maxLines = 1
                                     )
                                 }
-
-
                             }
                         }
                     }
                 }
             }
-
         }
     }
 }

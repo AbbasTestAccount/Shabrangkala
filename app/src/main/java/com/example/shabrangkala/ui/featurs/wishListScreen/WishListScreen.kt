@@ -154,8 +154,6 @@ fun WishListScreen(mainScreenViewModel: MainScreenViewModel) {
                                             maxLines = 1
                                         )
                                     }
-
-
                                 }
 
                                 if (mainScreenViewModel.wishListProducts.value[i].on_sale) {

@@ -8,6 +8,10 @@ package com.example.shabrangkala.ui.featurs.cartScreen
 import android.annotation.SuppressLint
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -121,6 +125,7 @@ fun CartScreen() {
                         directions = setOf(DismissDirection.StartToEnd),
                         dismissContent = {
                             SampleItem(item)
+
 
                         }
                     )
