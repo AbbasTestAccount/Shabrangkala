@@ -16,6 +16,10 @@ class ProductRepositoryImp(
         return apiService.getAllProducts()
     }
 
+    override suspend fun getAllOnSaleProducts(): List<Product> {
+        return apiService.getAllOnSaleProducts()
+    }
+
     override suspend fun getPopularTags(): List<Tag> {
         return apiService.getPopularTags()
     }

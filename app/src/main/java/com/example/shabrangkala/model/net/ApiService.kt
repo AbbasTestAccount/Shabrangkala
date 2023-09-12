@@ -22,6 +22,9 @@ interface ApiService {
     @GET("/wp-json/wc/v3/products")
     suspend fun getAllProducts() : List<Product>
 
+    @GET("/wp-json/wc/v3/products?on_sale=true")
+    suspend fun getAllOnSaleProducts() : List<Product>
+
     @GET("/wp-json/wc/v3/products/tags?orderby=count&order=desc&per_page=20")
     suspend fun getPopularTags(): List<Tag>
 

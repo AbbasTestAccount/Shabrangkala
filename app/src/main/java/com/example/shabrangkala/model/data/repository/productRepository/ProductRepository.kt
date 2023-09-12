@@ -9,6 +9,8 @@ import com.example.shabrangkala.model.data.variation.Variation
 interface ProductRepository {
 
     suspend fun getAllProducts(): List<Product>
+
+    suspend fun getAllOnSaleProducts(): List<Product>
     suspend fun getPopularTags(): List<Tag>
 
     suspend fun getParentCategories() : List<Category>

@@ -358,33 +358,61 @@ fun ProductRow(
     onProductClicked: (Int) -> Unit
 ) {
     LazyRow(contentPadding = PaddingValues(end = 10.dp)) {
-        items(10) {
+        val count = if (hasDiscount) 4 else 10
+        items(count) {
 
             Card(
                 colors = CardDefaults.cardColors(containerColor = Color.Transparent)
             ) {
                 Box(Modifier.padding(top = 25.dp, start = 20.dp)) {
+                    val list =
+                        if (hasDiscount) mainScreenViewModel.listOnSaleProduct else mainScreenViewModel.listProduct
                     Card(
-                        onClick = { onProductClicked(mainScreenViewModel.listProductImage.value[it].id) },
-                        modifier = Modifier.size(width = cardWidth, height = cardWidth+40.dp)
+                        onClick = { onProductClicked(list.value[it].id) },
+                        modifier = Modifier.size(width = cardWidth, height = cardWidth + 40.dp)
                     ) {
-                        if (mainScreenViewModel.listProductImage.value.isEmpty()) {
-                            Image(
-                                painter = painterResource(id = R.drawable.person),
-                                contentDescription = null,
-                                modifier = Modifier.size(width = cardWidth, height = cardWidth)
-                            )
-                        } else {
-                            AsyncImage(
-                                model = mainScreenViewModel.listProductImage.value[it].images[0].src,
+                        if (mainScreenViewModel.listProduct.value.isNotEmpty() && mainScreenViewModel.listOnSaleProduct.value.isNotEmpty()) {
+                            when (hasDiscount) {
+                                true -> {
+                                    AsyncImage(
+                                        model = mainScreenViewModel.listOnSaleProduct.value[it].images[0].src,
 //                        model = PATH ,
-                                contentDescription = null,
-                                modifier = Modifier.size(width = cardWidth, height = cardWidth),
-                                contentScale = ContentScale.Crop,
-                                placeholder = painterResource(id = R.drawable.search),
-                                error = painterResource(id = R.drawable.heart)
-                            )
+                                        contentDescription = null,
+                                        modifier = Modifier.size(
+                                            width = cardWidth,
+                                            height = cardWidth
+                                        ),
+                                        contentScale = ContentScale.Crop,
+                                        placeholder = painterResource(id = R.drawable.search),
+                                        error = painterResource(id = R.drawable.heart)
+                                    )
+                                }
+
+                                false -> {
+                                    AsyncImage(
+                                        model = mainScreenViewModel.listProduct.value[it].images[0].src,
+//                        model = PATH ,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(
+                                            width = cardWidth,
+                                            height = cardWidth
+                                        ),
+                                        contentScale = ContentScale.Crop,
+                                        placeholder = painterResource(id = R.drawable.search),
+                                        error = painterResource(id = R.drawable.heart)
+                                    )
+                                }
+                            }
+                        } else {
+                            Box(
+                                modifier = Modifier
+                                    .size(width = cardWidth, height = cardWidth)
+                                    .shimmerEffect()
+                            ) {
+
+                            }
                         }
+
 
                         Box(
                             contentAlignment = Alignment.BottomCenter,
@@ -401,15 +429,30 @@ fun ProductRow(
                                 .height(40.dp)
                                 .padding(end = 5.dp)
                         ) {
-                            if (mainScreenViewModel.listProductImage.value.isNotEmpty()) {
 
-                                Text(
-                                    text = mainScreenViewModel.listProductImage.value[it].name,
-                                    color = OnNiceGreen,
-                                    style = MaterialTheme.typography.displaySmall,
-                                    modifier = Modifier.padding(bottom = 10.dp),
-                                    fontWeight = FontWeight.Bold,
-                                )
+                            if (mainScreenViewModel.listProduct.value.isNotEmpty() && mainScreenViewModel.listOnSaleProduct.value.isNotEmpty()) {
+                                when (hasDiscount) {
+                                    true -> {
+                                        Text(
+                                            text = changeText(mainScreenViewModel.listOnSaleProduct.value[it].name),
+                                            color = OnNiceGreen,
+                                            style = MaterialTheme.typography.displaySmall,
+                                            modifier = Modifier.padding(bottom = 10.dp),
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                    }
+
+                                    false -> {
+                                        Text(
+                                            text = changeText(mainScreenViewModel.listProduct.value[it].name),
+                                            color = OnNiceGreen,
+                                            style = MaterialTheme.typography.displaySmall,
+                                            modifier = Modifier.padding(bottom = 10.dp),
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                    }
+                                }
+
                             } else {
                                 Text(
                                     text = "loading...",
@@ -425,7 +468,7 @@ fun ProductRow(
 
                     }
 
-                    if (hasDiscount) {
+                    if (mainScreenViewModel.listOnSaleProduct.value.isNotEmpty() && hasDiscount) {
                         Box(
                             contentAlignment = Alignment.Center,
                             modifier = Modifier
@@ -440,10 +483,11 @@ fun ProductRow(
                                 tint = Color.Red,
                             )
                             Text(
-                                text = "20%",
+                                text = "%OFF",
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 14.sp,
-                                color = Color.White
+                                fontSize = 12.sp,
+                                color = Color.White,
+                                modifier = Modifier.rotate(-45f)
 
                             )
                         }
@@ -452,6 +496,20 @@ fun ProductRow(
             }
         }
     }
+}
+
+fun changeText(title: String): String {
+    val title2 = if (title.contains("مجموعه")) {
+        title.substring(7)
+    }else{
+        title
+    }
+    return if (title2.length > 23) {
+        " ..." + title2.substring(0, 15)
+    } else {
+        title2
+    }
+
 }
 
 @Composable
@@ -529,7 +587,7 @@ fun BlogRow(
                     pageCount = 2,
                     state = pagerState
                 ) {
-                    if (mainScreenViewModel.listProductImage.value.isEmpty()) {
+                    if (mainScreenViewModel.listProduct.value.isEmpty()) {
 
                     } else {
                         AsyncImage(
@@ -795,12 +853,14 @@ fun AppTopAppBar(
                         )
 
                         Row {
-                            IconButton(onClick = {  navController.navigate(CART_SCREEN) }) {
+                            IconButton(onClick = { navController.navigate(CART_SCREEN) }) {
                                 Icon(
                                     painter = painterResource(id = R.drawable.shopping),
                                     contentDescription = null,
                                     modifier = Modifier
-                                        .size(25.dp).background(Color.Black, CircleShape).padding(3.dp),
+                                        .size(25.dp)
+                                        .background(Color.Black, CircleShape)
+                                        .padding(3.dp),
                                     tint = NiceGreen
                                 )
                             }

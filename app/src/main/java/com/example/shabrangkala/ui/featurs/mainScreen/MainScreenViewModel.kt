@@ -17,7 +17,8 @@ class MainScreenViewModel(
     private val productRepository: ProductRepository,
     private val blogRepository: BlogRepository
 ) : ViewModel() {
-    val listProductImage = mutableStateOf<List<Product>>(listOf())
+    val listProduct = mutableStateOf<List<Product>>(listOf())
+    val listOnSaleProduct = mutableStateOf<List<Product>>(listOf())
     val listPopularTags = mutableStateOf<List<Tag>>(listOf())
     val listCategory = mutableStateOf<List<Category>>(listOf())
     val listLastBlogPosts = mutableStateOf<List<Blog>>(listOf())
@@ -31,13 +32,19 @@ class MainScreenViewModel(
             async { getProductImage() }
             async { getParentCategory() }
             async { getLastBlogPosts() }
+            async { getAllOnSaleProducts() }
         }
+
+    }
+
+    private suspend fun getAllOnSaleProducts(){
+        listOnSaleProduct.value = productRepository.getAllOnSaleProducts()
     }
 
 
     private suspend fun getProductImage() {
 
-        listProductImage.value = productRepository.getAllProducts()
+        listProduct.value = productRepository.getAllProducts()
 
     }
 
