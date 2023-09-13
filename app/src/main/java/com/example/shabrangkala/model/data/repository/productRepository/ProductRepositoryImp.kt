@@ -1,16 +1,19 @@
 package com.example.shabrangkala.model.data.repository.productRepository
 
+import com.example.shabrangkala.model.data.ProductToSaveInCartList
 import com.example.shabrangkala.model.data.ProductToSaveInWishList
 import com.example.shabrangkala.model.data.category.Category
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.tag.Tag
 import com.example.shabrangkala.model.data.variation.Variation
+import com.example.shabrangkala.model.db.CartProductDao
 import com.example.shabrangkala.model.db.ProductDao
 import com.example.shabrangkala.model.net.ApiService
 
 class ProductRepositoryImp(
     private val apiService: ApiService,
-    private val productDao: ProductDao
+    private val productDao: ProductDao,
+    private val cartProductDao: CartProductDao
 ) : ProductRepository {
     override suspend fun getAllProducts(): List<Product> {
         return apiService.getAllProducts()
@@ -55,6 +58,14 @@ class ProductRepositoryImp(
 
     override suspend fun getAllWishListProducts(): List<Int> {
         return productDao.getAllWishListProducts()
+    }
+
+    override suspend fun addProductToCart(id: Int, price: Int, image: String, count: Int) {
+        return cartProductDao.addProductToCartList(ProductToSaveInCartList(id, price, image, count))
+    }
+
+    override suspend fun getDataFromCartDB(): List<ProductToSaveInCartList> {
+        return cartProductDao.getAllCartListProducts()
     }
 
 

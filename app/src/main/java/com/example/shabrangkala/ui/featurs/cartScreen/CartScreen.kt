@@ -1,7 +1,7 @@
 @file:OptIn(
     ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class,
     ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class
+    ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class
 )
 
 package com.example.shabrangkala.ui.featurs.cartScreen
@@ -55,6 +55,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,10 +64,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -80,6 +85,7 @@ import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.NiceGreen
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "UnrememberedMutableState")
@@ -407,12 +413,14 @@ fun DiscountTextField(textFieldState: MutableState<String>) {
 //}
 
 
+@SuppressLint("RememberReturnType")
 @Composable
 fun DiscountBottomSheet(
     openBottomSheet: MutableState<Boolean>,
     textFieldState: MutableState<String>
 ) {
 //todo: should be fix
+
 
 // Sheet content
     if (openBottomSheet.value) {
@@ -427,6 +435,8 @@ fun DiscountBottomSheet(
 
                 Spacer(modifier = Modifier.height(30.dp))
             }
+
+
 
         }
     }

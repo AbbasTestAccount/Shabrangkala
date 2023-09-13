@@ -12,6 +12,7 @@ import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.text.Html
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
@@ -410,7 +411,12 @@ fun ProductScreen(id: Int) {
             Text(text = productViewModel.productPrice.intValue.toString())
 
             Button(
-                onClick = { },
+                onClick = {
+                    productViewModel.addProductToCart(productData.id, productData.price.toInt(), productData.images[0].src, 2)
+                          productViewModel.getDataFromCartDB()
+                          if (productViewModel.cartList.value.isNotEmpty()){
+                              Log.e("bbbaa", productViewModel.cartList.value.toString() )
+                          }},
                 colors = ButtonDefaults.buttonColors(containerColor = HeavyGreen)
             ) {
                 Text(text = "               Add to card               ")

@@ -9,5 +9,5 @@ data class ProductToSaveInCartList(
     val Id : Int,
     val price: Int,
     val Image: String,
-    val details: String
+    val count: Int
 )
