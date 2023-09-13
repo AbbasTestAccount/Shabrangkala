@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.shabrangkala.model.data.ProductToSaveInCartList
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
 import com.example.shabrangkala.model.data.variation.Variation
@@ -20,7 +19,7 @@ class ProductScreenViewModel(private val productRepository: ProductRepository) :
 
 
     fun loadProductData(id: Int) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
 
             productData.value = productRepository.getCertainProduct(id)
 

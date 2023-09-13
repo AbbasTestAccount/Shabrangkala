@@ -12,13 +12,13 @@ import kotlinx.coroutines.launch
 class CategoryScreenViewModel(private val productRepository: ProductRepository) : ViewModel() {
 
     var productsData = mutableStateOf<List<Product>>(listOf())
-    var categoryName = mutableStateOf<String>("")
+    var categoryName = mutableStateOf("")
     var categoryCount = mutableIntStateOf(0)
     var pageNumber = mutableIntStateOf(1)
 
 
     fun loadProductDataOfCategory(id: Int) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             productsData.value = productRepository.getProductsOfCertainCategory(id, pageNumber.intValue)
             Log.e("abbas22", pageNumber.intValue.toString() )
         }

@@ -1,7 +1,6 @@
 package com.example.shabrangkala.model.data.repository.productRepository
 
 import com.example.shabrangkala.model.data.ProductToSaveInCartList
-import com.example.shabrangkala.model.data.ProductToSaveInWishList
 import com.example.shabrangkala.model.data.category.Category
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.tag.Tag

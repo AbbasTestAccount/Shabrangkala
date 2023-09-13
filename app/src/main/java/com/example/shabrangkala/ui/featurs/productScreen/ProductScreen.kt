@@ -1,5 +1,5 @@
 @file:OptIn(
-    ExperimentalFoundationApi::class, ExperimentalTextApi::class,
+    ExperimentalFoundationApi::class,
     ExperimentalLayoutApi::class
 )
 
@@ -12,7 +12,6 @@ import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.text.Html
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.spring
@@ -74,7 +73,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDirection
@@ -145,7 +143,6 @@ fun ProductScreen(id: Int) {
     var isOverlayPresented = true
 
     val productData = productViewModel.productData.value
-    val productVariations = productViewModel.productVariations.value
 
     var selectedVariations = rememberSaveable { mutableMapOf<String, String>() }
 
@@ -161,7 +158,7 @@ fun ProductScreen(id: Int) {
         isOverlayPresented = false
     }
 
-    Box() {
+    Box {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -315,10 +312,7 @@ fun ProductScreen(id: Int) {
                             Arrangement.End
                         )
 
-                        selectedVariations.put(
-                            productData.attributes[index].name,
-                            productData.attributes[index].options[0]
-                        )
+                        selectedVariations[productData.attributes[index].name] = productData.attributes[index].options[0]
 
                         var selectedItem = remember {
                             mutableStateOf(productData.attributes[index].options[0])
@@ -541,10 +535,7 @@ fun AttributeTagsChips(
                     onClick = {
 
                         selectedItem.value = productData.attributes[index].options[it]
-                        selectedVariations.put(
-                            productData.attributes[index].name,
-                            productData.attributes[index].options[it]
-                        )
+                        selectedVariations[productData.attributes[index].name] = productData.attributes[index].options[it]
                         productViewModel.findPriceWithVariation(selectedVariations)
 
 

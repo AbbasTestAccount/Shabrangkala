@@ -1,7 +1,7 @@
 @file:OptIn(
-    ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class,
+    ExperimentalMaterial3Api::class,
     ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class,
-    ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class
+    ExperimentalMaterial3Api::class
 )
 
 package com.example.shabrangkala.ui.featurs.cartScreen
@@ -10,12 +10,10 @@ import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -57,7 +55,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -108,8 +105,8 @@ fun CartScreen() {
 
                 itemsIndexed(
                     items = cartViewModel.cartList.value,
-                    key = { index, item -> item.hashCode() })
-                { index, item ->
+                    key = { _, item -> item.hashCode() })
+                { _, item ->
                     //todo: sort list
 
 
@@ -419,7 +416,7 @@ fun DiscountBottomSheet(
             containerColor = LiteNiceGreen,
         ) {
 
-            Column() {
+            Column {
                 DiscountTextField(textFieldState)
 
                 Spacer(modifier = Modifier.height(30.dp))

@@ -94,7 +94,6 @@ fun WishListScreen(mainScreenViewModel: MainScreenViewModel) {
         ) {
 
             if (wishList.isEmpty()) {
-                Text(text = "sdkalhghjksd")
 
             } else {
 

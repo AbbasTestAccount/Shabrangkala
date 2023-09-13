@@ -9,7 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -20,15 +19,15 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.shabrangkala.di.myModules
-import com.example.shabrangkala.ui.featurs.logInScreen.LogInScreen
-import com.example.shabrangkala.ui.featurs.mainScreen.MainScreen
 import com.example.shabrangkala.ui.featurs.OnBoardingScreen
-import com.example.shabrangkala.ui.featurs.productScreen.ProductScreen
-import com.example.shabrangkala.ui.featurs.signUpScreen.SignUpScreen
 import com.example.shabrangkala.ui.featurs.SignUpSignInScreen
 import com.example.shabrangkala.ui.featurs.blogScreen.BlogScreen
 import com.example.shabrangkala.ui.featurs.cartScreen.CartScreen
 import com.example.shabrangkala.ui.featurs.categoryListScreen.CategoryScreen
+import com.example.shabrangkala.ui.featurs.logInScreen.LogInScreen
+import com.example.shabrangkala.ui.featurs.mainScreen.MainScreen
+import com.example.shabrangkala.ui.featurs.productScreen.ProductScreen
+import com.example.shabrangkala.ui.featurs.signUpScreen.SignUpScreen
 import com.example.shabrangkala.ui.theme.ShabrangkalaTheme
 import com.example.shabrangkala.utils.BLOG_SCREEN
 import com.example.shabrangkala.utils.CART_SCREEN

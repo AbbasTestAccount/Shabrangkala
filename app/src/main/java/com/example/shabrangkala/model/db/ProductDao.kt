@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.shabrangkala.model.data.ProductToSaveInWishList
-import com.example.shabrangkala.model.data.product.Product
 
 @Dao
 interface ProductDao {

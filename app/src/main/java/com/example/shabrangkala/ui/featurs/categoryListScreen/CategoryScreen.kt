@@ -66,9 +66,6 @@ fun CategoryScreen(id: Int) {
     val categoryViewModel = getNavViewModel<CategoryScreenViewModel>()
     val navController = getNavController()
 
-    val showEmptyCategory = remember { mutableStateOf(true) }
-
-
 
     categoryViewModel.loadProductDataOfCategory(id)
     categoryViewModel.getCategoryNameById(id)
@@ -246,7 +243,7 @@ fun CategoryScreen(id: Int) {
 @Composable
 fun PageSelect(categoryProductCount: Int, intValue: MutableIntState, onPageSelect: () -> Unit) {
 
-    LazyRow() {
+    LazyRow {
         items(categoryProductCount / 20 + lastPage(categoryProductCount)) {
             IconButton(
                 onClick = {

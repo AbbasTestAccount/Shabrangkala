@@ -9,7 +9,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -117,8 +116,6 @@ import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
 import kotlinx.coroutines.launch
-
-const val PATH = "https://www.shabrangkala.ir/wp-content/uploads/2023/05/انتقام-جویان.jpg"
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -564,7 +561,6 @@ fun BlogRow(
 
     if (mainScreenViewModel.listLastBlogPosts.value.isEmpty()) {
         EmptyBlogRow()
-        Log.e("askjakjjs", "tesssssssssssssst" )
     } else {
         Card(
             border = BorderStroke(0.5.dp, LiteNiceGreen),
@@ -762,7 +758,7 @@ fun EmptyCategoryRow() {
         items(3) {
 
             Column {
-                Card() {
+                Card {
                     Box {
                         Box(
                             modifier = Modifier
@@ -873,7 +869,7 @@ fun TitlePiece(title: String) {
 }
 
 fun onFabClicked(context: Context) {
-    Toast.makeText(context, "saDASDASDA", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, "clicked", Toast.LENGTH_SHORT).show()
 }
 
 
