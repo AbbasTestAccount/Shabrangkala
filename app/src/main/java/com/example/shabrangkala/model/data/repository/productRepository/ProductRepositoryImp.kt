@@ -68,5 +68,9 @@ class ProductRepositoryImp(
         return cartProductDao.getAllCartListProducts()
     }
 
+    override suspend fun removeDataFromDB(productToSaveInCartList: ProductToSaveInCartList) {
+        cartProductDao.deleteProductFromWishList(productToSaveInCartList)
+    }
+
 
 }

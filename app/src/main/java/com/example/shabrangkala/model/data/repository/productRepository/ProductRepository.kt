@@ -34,4 +34,6 @@ interface ProductRepository {
 
     suspend fun getDataFromCartDB(): List<ProductToSaveInCartList>
 
+    suspend fun removeDataFromDB(productToSaveInCartList: ProductToSaveInCartList)
+
 }

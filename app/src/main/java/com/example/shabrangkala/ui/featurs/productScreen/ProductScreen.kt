@@ -86,6 +86,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.shabrangkala.R
 import com.example.shabrangkala.model.data.product.Product
+import com.example.shabrangkala.ui.featurs.cartScreen.CartScreenViewModel
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreenViewModel
 import com.example.shabrangkala.ui.theme.HeavyGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreen
@@ -115,6 +116,7 @@ fun ProductScreen(id: Int) {
 
     val productViewModel = getNavViewModel<ProductScreenViewModel>()
     val mainViewModel = getNavViewModel<MainScreenViewModel>()
+    val cartViewModel = getNavViewModel<CartScreenViewModel>()
     val navController = getNavController()
 
     val pagerState = rememberPagerState()
@@ -412,10 +414,10 @@ fun ProductScreen(id: Int) {
 
             Button(
                 onClick = {
-                    productViewModel.addProductToCart(productData.id, productData.price.toInt(), productData.images[0].src, 2)
-                          productViewModel.getDataFromCartDB()
-                          if (productViewModel.cartList.value.isNotEmpty()){
-                              Log.e("bbbaa", productViewModel.cartList.value.toString() )
+                    cartViewModel.addProductToCart(productData.id, productData.price.toInt(), productData.images[0].src, 2)
+                          cartViewModel.getDataFromCartDB()
+                          if (cartViewModel.cartList.value.isNotEmpty()){
+                              Log.e("bbbaa", cartViewModel.cartList.value.toString() )
                           }},
                 colors = ButtonDefaults.buttonColors(containerColor = HeavyGreen)
             ) {

@@ -17,7 +17,6 @@ class ProductScreenViewModel(private val productRepository: ProductRepository) :
     var productData = mutableStateOf(EMPTY_PRODUCT)
     var productVariations = mutableStateOf<List<Variation>>(listOf())
     var productPrice = mutableIntStateOf(0)
-    var cartList = mutableStateOf<List<ProductToSaveInCartList>>(listOf())
 
 
     fun loadProductData(id: Int) {
@@ -45,24 +44,17 @@ class ProductScreenViewModel(private val productRepository: ProductRepository) :
         }
     }
 
-    fun addProductToCart(id: Int, price: Int, image: String, count:Int){
-        viewModelScope.launch( Dispatchers.IO) {
-            productRepository.addProductToCart(id, price, image, count)
-        }
-    }
+
 
 
     fun removeProductFromWishList(product: Product) {
         viewModelScope.launch(Dispatchers.IO) {
             productRepository.removeProductFromWishList(product.id)
+            //todo : should update list
         }
     }
 
-    fun getDataFromCartDB(){
-        viewModelScope.launch(Dispatchers.IO){
-            cartList.value = productRepository.getDataFromCartDB()
-        }
-    }
+
 
 
     fun findPriceWithVariation(selectedVariations: MutableMap<String, String>) {
