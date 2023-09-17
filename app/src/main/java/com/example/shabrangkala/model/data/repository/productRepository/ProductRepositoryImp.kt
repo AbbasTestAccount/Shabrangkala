@@ -72,5 +72,9 @@ class ProductRepositoryImp(
         cartProductDao.deleteProductFromWishList(productToSaveInCartList)
     }
 
+    override suspend fun getProductListByNameSearch(name: String): List<Product> {
+        return apiService.searchByName(name)
+    }
+
 
 }

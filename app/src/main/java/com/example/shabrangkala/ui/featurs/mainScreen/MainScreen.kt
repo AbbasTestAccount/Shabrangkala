@@ -21,7 +21,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,6 +38,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -49,7 +49,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
@@ -58,7 +57,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -106,6 +104,7 @@ import coil.compose.AsyncImage
 import com.example.shabrangkala.R
 import com.example.shabrangkala.ui.featurs.wishListScreen.WishListScreen
 import com.example.shabrangkala.ui.featurs.wishListScreen.shimmerEffect
+import com.example.shabrangkala.ui.theme.HeavyGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.LiteNiceGreenWithTrans
 import com.example.shabrangkala.ui.theme.NiceGreen
@@ -129,7 +128,9 @@ fun MainScreen() {
     val screenWidth = configuration.screenWidthDp.dp
     val cardWidth = screenWidth / 2 - 30.dp
 
+    val showFab = remember { mutableStateOf(true) }
     val showTopBar = remember { mutableStateOf(true) }
+    val showBottomBar = remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     val selectedItem = rememberSaveable() { mutableIntStateOf(0) }
@@ -148,12 +149,14 @@ fun MainScreen() {
 
     Scaffold(
         topBar = { AppTopAppBar(showTopBar, scrollState, navController) },
-        floatingActionButton = { FAB(scrollState) { onFabClicked(context) } },
-        bottomBar = { AppBottomBar(scrollState, selectedItem, bottomList) }) {
+        floatingActionButton = { FAB(scrollState, showFab) { onFabClicked(context) } },
+        bottomBar = { AppBottomBar(scrollState, selectedItem, bottomList, showBottomBar) }) {
 
         when (selectedItem.intValue) {
             0 -> {
+                showFab.value = true
                 showTopBar.value = true
+                showBottomBar.value = true
                 Column(
                     modifier = Modifier
                         .verticalScroll(scrollState)
@@ -230,6 +233,7 @@ fun MainScreen() {
 
             1 -> {
                 showTopBar.value = false
+                showFab.value = false
                 mainScreenViewModel.getAllWishListProductsId()
 
                 if (mainScreenViewModel.wishListProductsId.value.isNotEmpty()) {
@@ -265,7 +269,8 @@ fun MainScreen() {
 
             2 -> {
                 showTopBar.value = false
-                SearchBarSample(mainScreenViewModel)
+                showFab.value = false
+                SearchBarSample(mainScreenViewModel,showBottomBar)
             }
         }
 
@@ -958,7 +963,7 @@ fun AppTopAppBar(
 }
 
 @Composable
-fun FAB(scrollState: ScrollState, onFabClicked: () -> Unit) {
+fun FAB(scrollState: ScrollState, showFab: MutableState<Boolean>, onFabClicked: () -> Unit) {
 
     val expandedFab by remember {
         derivedStateOf {
@@ -972,24 +977,26 @@ fun FAB(scrollState: ScrollState, onFabClicked: () -> Unit) {
         }
     }
 
+    if (showFab.value){
+        AnimatedVisibility(
+            visible = fabVisibility
+        ) {
+            ExtendedFloatingActionButton(
+                onClick = { onFabClicked.invoke() },
+                expanded = expandedFab,
+                icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.shopping_cart),
+                        "Localized Description",
+                        modifier = Modifier.size(24.dp)
+                    )
+                },
+                text = { Text(text = "مشاهده سبد خرید", fontWeight = FontWeight.Bold) },
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            )
+        }
 
-    AnimatedVisibility(
-        visible = fabVisibility
-    ) {
-        ExtendedFloatingActionButton(
-            onClick = { onFabClicked.invoke() },
-            expanded = expandedFab,
-            icon = {
-                Icon(
-                    painter = painterResource(id = R.drawable.shopping_cart),
-                    "Localized Description",
-                    modifier = Modifier.size(24.dp)
-                )
-            },
-            text = { Text(text = "مشاهده سبد خرید", fontWeight = FontWeight.Bold) },
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary
-        )
     }
 
 }
@@ -998,7 +1005,8 @@ fun FAB(scrollState: ScrollState, onFabClicked: () -> Unit) {
 fun AppBottomBar(
     scrollState: ScrollState,
     selectedItem: MutableState<Int>,
-    bottomList: List<Pair<String, Int>>
+    bottomList: List<Pair<String, Int>>,
+    showBottomBar: MutableState<Boolean>
 ) {
 
     var oldValue = 0
@@ -1015,36 +1023,38 @@ fun AppBottomBar(
         }
     }
 
-    AnimatedVisibility(
-        visible = closeOpenBottomBar,
-        exit = shrinkVertically() + fadeOut(),
-        enter = expandVertically() + fadeIn()
-    ) {
-        NavigationBar(
-            containerColor = NiceGreen, modifier = Modifier.height(75.dp),
+    if (showBottomBar.value){
+        AnimatedVisibility(
+            visible = closeOpenBottomBar,
+            exit = shrinkVertically() + fadeOut(),
+            enter = expandVertically() + fadeIn()
         ) {
-            bottomList.forEachIndexed { index, item ->
-                NavigationBarItem(
+            NavigationBar(
+                containerColor = NiceGreen, modifier = Modifier.height(75.dp),
+            ) {
+                bottomList.forEachIndexed { index, item ->
+                    NavigationBarItem(
 
-                    icon = {
-                        Icon(
-                            painterResource(item.second),
-                            contentDescription = item.first,
-                            modifier = Modifier.size(24.dp)
+                        icon = {
+                            Icon(
+                                painterResource(item.second),
+                                contentDescription = item.first,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        },
+                        label = { Text(item.first) },
+                        selected = selectedItem.value == index,
+                        onClick = { selectedItem.value = index },
+                        colors = NavigationBarItemDefaults.colors(
+
+                            selectedIconColor = bottomNavColor(index),
+                            selectedTextColor = bottomNavColor(index),
+                            indicatorColor = OnNiceGreen,
+                            unselectedIconColor = Color.Gray,
+                            unselectedTextColor = Color.Gray
                         )
-                    },
-                    label = { Text(item.first) },
-                    selected = selectedItem.value == index,
-                    onClick = { selectedItem.value = index },
-                    colors = NavigationBarItemDefaults.colors(
-
-                        selectedIconColor = bottomNavColor(index),
-                        selectedTextColor = bottomNavColor(index),
-                        indicatorColor = OnNiceGreen,
-                        unselectedIconColor = Color.Gray,
-                        unselectedTextColor = Color.Gray
                     )
-                )
+                }
             }
         }
     }
@@ -1068,7 +1078,7 @@ fun bottomNavColor(index: Int): Color {
 }
 
 @Composable
-fun SearchBarSample(mainScreenViewModel: MainScreenViewModel) {
+fun SearchBarSample(mainScreenViewModel: MainScreenViewModel, showBottomBar: MutableState<Boolean>) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
@@ -1087,6 +1097,7 @@ fun SearchBarSample(mainScreenViewModel: MainScreenViewModel) {
                 active = active,
                 onActiveChange = {
                     active = it
+                    showBottomBar.value = (active != true)
                 },
                 placeholder = {
                     Text(
@@ -1097,21 +1108,22 @@ fun SearchBarSample(mainScreenViewModel: MainScreenViewModel) {
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
 //            trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
             ) {
-                repeat(6) { idx ->
-                    val resultText = "Suggestion $idx"
-                    ListItem(
-                        headlineContent = { Text(resultText) },
-                        supportingContent = { Text("Additional info") },
-                        leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
-                        modifier = Modifier
-                            .clickable {
-                                text = resultText
-                                active = false
-                            }
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-                }
+                SearchResult(text, mainScreenViewModel)
+//                repeat(6) { idx ->
+//                    val resultText = "Suggestion $idx"
+//                    ListItem(
+//                        headlineContent = { Text(resultText) },
+//                        supportingContent = { Text("Additional info") },
+//                        leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
+//                        modifier = Modifier
+//                            .clickable {
+//                                text = resultText
+//                                active = false
+//                            }
+//                            .fillMaxWidth()
+//                            .padding(horizontal = 16.dp, vertical = 4.dp)
+//                    )
+//                }
             }
 
         }
@@ -1122,19 +1134,19 @@ fun SearchBarSample(mainScreenViewModel: MainScreenViewModel) {
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.padding(top = 72.dp)
         ) {
-            if (mainScreenViewModel.searchList.value.isEmpty()) {
+            if (mainScreenViewModel.lastSearchList.value.isEmpty()) {
                 //todo
             } else {
-                for (it in 0..mainScreenViewModel.searchList.value.size) {
+                for (it in 0..mainScreenViewModel.lastSearchList.value.size) {
 
                     AssistChip(
                         onClick = {
                             active = true
-                            text = mainScreenViewModel.searchList.value[it].name
+                            text = mainScreenViewModel.lastSearchList.value[it].name
                         },
                         label = {
                             Text(
-                                text = mainScreenViewModel.searchList.value[it].name
+                                text = mainScreenViewModel.lastSearchList.value[it].name
                             )
                         },
                         border = AssistChipDefaults.assistChipBorder(borderColor = LiteNiceGreen),
@@ -1152,6 +1164,78 @@ fun SearchBarSample(mainScreenViewModel: MainScreenViewModel) {
 }
 
 @Composable
-fun searchResult(){
+fun SearchResult(text: String, mainScreenViewModel: MainScreenViewModel) {
+    mainScreenViewModel.getProductListByNameSearch(text)
+
+    if (text.isEmpty()) {
+        Text(text = "Nothing.......")
+    } else if (mainScreenViewModel.searchListByName.value.isEmpty()) {
+        Text(text = "loading...")
+    } else {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            contentPadding = PaddingValues(top = 10.dp)
+        ) {
+            items(mainScreenViewModel.searchListByName.value.size) { index ->
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth(0.9f)
+                            .height(80.dp),
+                        colors = CardDefaults.cardColors(containerColor = LiteNiceGreen),
+                        border = BorderStroke(1.dp, HeavyGreen)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .fillMaxHeight(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+
+                        ) {
+
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.padding(start = 15.dp)
+                            ) {
+                                Text(
+                                    text = (index+1).toString(),
+                                    modifier = Modifier
+                                        .size(25.dp)
+                                        .background(HeavyGreen, CircleShape)
+                                        .align(Alignment.CenterVertically),
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.width(15.dp))
+
+                                Text(
+                                    text = mainScreenViewModel.searchListByName.value[index].name,
+                                    color = Color.Black,
+                                    modifier = Modifier.align(Alignment.CenterVertically)
+                                )
+                            }
+
+                            Card(shape = RoundedCornerShape(10.dp)) {
+                                AsyncImage(
+                                    model = mainScreenViewModel.searchListByName.value[index].images[0].src,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.size(80.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(10.dp))
+                }
+
+
+            }
+        }
+
+    }
 
 }

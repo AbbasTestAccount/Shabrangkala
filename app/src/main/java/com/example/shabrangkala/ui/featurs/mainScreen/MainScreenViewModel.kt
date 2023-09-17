@@ -27,7 +27,8 @@ class MainScreenViewModel(
     val listLastBlogPosts = mutableStateOf<List<Blog>>(listOf())
     var wishListProductsId = mutableStateOf<List<Int>>(listOf())
     var wishListProducts = mutableStateOf<List<Product>>(listOf())
-    val searchList = mutableStateOf<List<Search>>(listOf())
+    val lastSearchList = mutableStateOf<List<Search>>(listOf())
+    val searchListByName = mutableStateOf<List<Product>>(listOf())
 
 
     init {
@@ -37,7 +38,6 @@ class MainScreenViewModel(
             async { getParentCategory() }
             async { getLastBlogPosts() }
             async { getAllOnSaleProducts() }
-            async { loadLastSearches() }
         }
 
     }
@@ -64,6 +64,16 @@ class MainScreenViewModel(
         listCategory.value = productRepository.getParentCategories()
     }
 
+    fun getProductListByNameSearch(name: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            searchListByName.value = productRepository.getProductListByNameSearch(name)
+        }
+    }
+
+    fun clearProductListByNameSearch(){
+        searchListByName.value = listOf()
+    }
+
 
 //--------------------------------------------------------------------------
 
@@ -72,7 +82,7 @@ class MainScreenViewModel(
 
     }
 
-    //--------------------------------------------------------------------------
+//--------------------------------------------------------------------------
     fun getAllWishListProductsId() {
         viewModelScope.launch(Dispatchers.IO) {
             wishListProductsId.value = productRepository.getAllWishListProducts()
@@ -92,11 +102,11 @@ class MainScreenViewModel(
         }
     }
 
-//------------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 
     fun loadLastSearches(){
         viewModelScope.launch(Dispatchers.IO) {
-            searchList.value = searchRepository.getAllSearches()
+            lastSearchList.value = searchRepository.getAllSearches()
         }
     }
 

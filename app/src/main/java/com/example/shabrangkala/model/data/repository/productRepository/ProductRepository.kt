@@ -35,4 +35,6 @@ interface ProductRepository {
 
     suspend fun removeDataFromDB(productToSaveInCartList: ProductToSaveInCartList)
 
+    suspend fun getProductListByNameSearch(name: String): List<Product>
+
 }
