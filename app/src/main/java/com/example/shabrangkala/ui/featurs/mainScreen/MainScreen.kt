@@ -102,6 +102,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
+import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.ui.featurs.wishListScreen.WishListScreen
 import com.example.shabrangkala.ui.featurs.wishListScreen.shimmerEffect
 import com.example.shabrangkala.ui.theme.HeavyGreen
@@ -270,7 +271,10 @@ fun MainScreen() {
             2 -> {
                 showTopBar.value = false
                 showFab.value = false
-                SearchBarSample(mainScreenViewModel,showBottomBar)
+                SearchBarSample(mainScreenViewModel,showBottomBar){ productClicked ->
+                    navController.navigate("$PRODUCT_SCREEN/${productClicked.id}")
+                    //todo
+                }
             }
         }
 
@@ -1078,7 +1082,7 @@ fun bottomNavColor(index: Int): Color {
 }
 
 @Composable
-fun SearchBarSample(mainScreenViewModel: MainScreenViewModel, showBottomBar: MutableState<Boolean>) {
+fun SearchBarSample(mainScreenViewModel: MainScreenViewModel, showBottomBar: MutableState<Boolean>, searchItemClicked: (Product) -> Unit) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
@@ -1108,7 +1112,7 @@ fun SearchBarSample(mainScreenViewModel: MainScreenViewModel, showBottomBar: Mut
                 leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
 //            trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
             ) {
-                SearchResult(text, mainScreenViewModel)
+                SearchResult(text, mainScreenViewModel, searchItemClicked)
 //                repeat(6) { idx ->
 //                    val resultText = "Suggestion $idx"
 //                    ListItem(
@@ -1164,7 +1168,7 @@ fun SearchBarSample(mainScreenViewModel: MainScreenViewModel, showBottomBar: Mut
 }
 
 @Composable
-fun SearchResult(text: String, mainScreenViewModel: MainScreenViewModel) {
+fun SearchResult(text: String, mainScreenViewModel: MainScreenViewModel, searchItemClicked: (Product) -> Unit) {
     mainScreenViewModel.getProductListByNameSearch(text)
 
     if (text.isEmpty()) {
@@ -1184,7 +1188,8 @@ fun SearchResult(text: String, mainScreenViewModel: MainScreenViewModel) {
                             .fillMaxWidth(0.9f)
                             .height(80.dp),
                         colors = CardDefaults.cardColors(containerColor = LiteNiceGreen),
-                        border = BorderStroke(1.dp, HeavyGreen)
+                        border = BorderStroke(1.dp, HeavyGreen),
+                        onClick = {searchItemClicked(mainScreenViewModel.searchListByName.value[index])}
                     ) {
                         Row(
                             modifier = Modifier
