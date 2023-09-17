@@ -39,7 +39,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
@@ -49,7 +48,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AssistChip
@@ -67,11 +65,13 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.SearchBarDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -91,12 +91,13 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
@@ -264,7 +265,7 @@ fun MainScreen() {
 
             2 -> {
                 showTopBar.value = false
-                SearchBarSample()
+                SearchBarSample(mainScreenViewModel)
             }
         }
 
@@ -1067,64 +1068,90 @@ fun bottomNavColor(index: Int): Color {
 }
 
 @Composable
-fun SearchBarSample() {
+fun SearchBarSample(mainScreenViewModel: MainScreenViewModel) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
     Box(
         Modifier
-            .fillMaxSize()
-            .semantics {}) {
-        SearchBar(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .semantics {},
-            query = text,
-            onQueryChange = { text = it },
-            onSearch = { active = false },
-            active = active,
-            onActiveChange = {
-                active = it
-            },
-            placeholder = { Text("Hinted search text") },
-            leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
-            trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
-        ) {
-            repeat(4) { idx ->
-                val resultText = "Suggestion $idx"
-                ListItem(
-                    headlineContent = { Text(resultText) },
-                    supportingContent = { Text("Additional info") },
-                    leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
-                    modifier = Modifier
-                        .clickable {
-                            text = resultText
-                            active = false
-                        }
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                )
+            .fillMaxSize(), contentAlignment = Alignment.CenterEnd
+    ) {
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+            SearchBar(
+                colors = SearchBarDefaults.colors(containerColor = NiceGreen),
+                modifier = Modifier
+                    .align(Alignment.TopCenter),
+                query = text,
+                onQueryChange = { text = it },
+                onSearch = { active = false },
+                active = active,
+                onActiveChange = {
+                    active = it
+                },
+                placeholder = {
+                    Text(
+                        "کلمه مورد نظر خود را وارد کنید",
+
+                        )
+                },
+                leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+//            trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
+            ) {
+                repeat(6) { idx ->
+                    val resultText = "Suggestion $idx"
+                    ListItem(
+                        headlineContent = { Text(resultText) },
+                        supportingContent = { Text("Additional info") },
+                        leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
+                        modifier = Modifier
+                            .clickable {
+                                text = resultText
+                                active = false
+                            }
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    )
+                }
             }
+
         }
 
-        LazyColumn(
-            contentPadding = PaddingValues(
-                start = 16.dp,
-                top = 72.dp,
-                end = 16.dp,
-                bottom = 16.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+
+        FlowRow(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(top = 72.dp)
         ) {
-            val list = List(100) { "Text $it" }
-            items(count = list.size) {
-                Text(
-                    list[it],
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp)
-                )
+            if (mainScreenViewModel.searchList.value.isEmpty()) {
+                //todo
+            } else {
+                for (it in 0..mainScreenViewModel.searchList.value.size) {
+
+                    AssistChip(
+                        onClick = {
+                            active = true
+                            text = mainScreenViewModel.searchList.value[it].name
+                        },
+                        label = {
+                            Text(
+                                text = mainScreenViewModel.searchList.value[it].name
+                            )
+                        },
+                        border = AssistChipDefaults.assistChipBorder(borderColor = LiteNiceGreen),
+                        modifier = Modifier
+                            .fillMaxWidth(0.4f),
+                        colors = AssistChipDefaults.assistChipColors(containerColor = OnNiceGreen)
+                    )
+                    Spacer(modifier = Modifier.width(5.dp))
+                }
             }
+
+
         }
     }
+}
+
+@Composable
+fun searchResult(){
+
 }

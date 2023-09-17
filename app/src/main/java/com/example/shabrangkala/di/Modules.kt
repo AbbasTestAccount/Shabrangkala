@@ -6,6 +6,8 @@ import com.example.shabrangkala.model.data.repository.blogRepository.BlogReposit
 import com.example.shabrangkala.model.data.repository.blogRepository.BlogRepositoryImp
 import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
 import com.example.shabrangkala.model.data.repository.productRepository.ProductRepositoryImp
+import com.example.shabrangkala.model.data.repository.searchRepository.SearchRepository
+import com.example.shabrangkala.model.data.repository.searchRepository.SearchRepositoryImp
 import com.example.shabrangkala.model.db.AppDatabase
 import com.example.shabrangkala.model.net.createApiService
 import com.example.shabrangkala.ui.featurs.logInScreen.LogInScreenViewModel
@@ -26,22 +28,30 @@ val myModules = module {
     single { createApiService() }
 //
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "app_dataBase.db").build()
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "app_dataBase.db")
+            .fallbackToDestructiveMigration().build()
     }
 //
 //    single<UserRepository> { UserRepositoryImpl(get(), get()) }
-    single<ProductRepository> { ProductRepositoryImp(get(), get<AppDatabase>().productDao(), get<AppDatabase>().cartProductDao()) }
+    single<ProductRepository> {
+        ProductRepositoryImp(
+            get(),
+            get<AppDatabase>().productDao(),
+            get<AppDatabase>().cartProductDao()
+        )
+    }
     single<BlogRepository> { BlogRepositoryImp(get()) }
+    single<SearchRepository> { SearchRepositoryImp(get<AppDatabase>().searchDao()) }
 
 //    single<CommentRepository> { CommentRepositoryImpl(get()) }
 //    single<CartRepository> { CartRepositoryImpl(get() , get()) }
 
     viewModel { SignUpScreenViewModel() }
     viewModel { LogInScreenViewModel() }
-    viewModel { MainScreenViewModel(get(), get()) }
+    viewModel { MainScreenViewModel(get(), get(), get()) }
     viewModel { ProductScreenViewModel(get()) }
-    viewModel { BlogScreenViewModel(get())}
+    viewModel { BlogScreenViewModel(get()) }
     viewModel { CategoryScreenViewModel(get()) }
-    viewModel { CartScreenViewModel(get())}
+    viewModel { CartScreenViewModel(get()) }
 
 }

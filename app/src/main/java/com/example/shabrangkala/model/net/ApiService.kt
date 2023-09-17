@@ -53,6 +53,9 @@ interface ApiService {
     @GET("wp-json/wc/v3/products/categories/{id}")
     suspend fun getCategoryById(@Path("id") categoryId: Int): Category
 
+    @GET("wp-json/wc/v3/products")
+    suspend fun searchByName(@Query("search") searchingString : String) : List<Product>
+
     //todo
 
 //    @POST("customers")

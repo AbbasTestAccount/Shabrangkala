@@ -3,11 +3,13 @@ package com.example.shabrangkala.ui.featurs.mainScreen
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.shabrangkala.model.data.Search
 import com.example.shabrangkala.model.data.blog.Blog
 import com.example.shabrangkala.model.data.category.Category
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.repository.blogRepository.BlogRepository
 import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
+import com.example.shabrangkala.model.data.repository.searchRepository.SearchRepository
 import com.example.shabrangkala.model.data.tag.Tag
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -15,7 +17,8 @@ import kotlinx.coroutines.launch
 
 class MainScreenViewModel(
     private val productRepository: ProductRepository,
-    private val blogRepository: BlogRepository
+    private val blogRepository: BlogRepository,
+    private val searchRepository: SearchRepository
 ) : ViewModel() {
     val listProduct = mutableStateOf<List<Product>>(listOf())
     val listOnSaleProduct = mutableStateOf<List<Product>>(listOf())
@@ -24,6 +27,7 @@ class MainScreenViewModel(
     val listLastBlogPosts = mutableStateOf<List<Blog>>(listOf())
     var wishListProductsId = mutableStateOf<List<Int>>(listOf())
     var wishListProducts = mutableStateOf<List<Product>>(listOf())
+    val searchList = mutableStateOf<List<Search>>(listOf())
 
 
     init {
@@ -33,11 +37,12 @@ class MainScreenViewModel(
             async { getParentCategory() }
             async { getLastBlogPosts() }
             async { getAllOnSaleProducts() }
+            async { loadLastSearches() }
         }
 
     }
 
-    private suspend fun getAllOnSaleProducts(){
+    private suspend fun getAllOnSaleProducts() {
         listOnSaleProduct.value = productRepository.getAllOnSaleProducts()
     }
 
@@ -86,5 +91,29 @@ class MainScreenViewModel(
 
         }
     }
+
+//------------------------------------------------------------------------------
+
+    fun loadLastSearches(){
+        viewModelScope.launch(Dispatchers.IO) {
+            searchList.value = searchRepository.getAllSearches()
+        }
+    }
+
+    fun addNewSearchItem(search: Search){
+        viewModelScope.launch(Dispatchers.IO) {
+            searchRepository.addSearchToList(search)
+        }
+        loadLastSearches()
+    }
+
+    fun removeSearchItem(search: Search){
+        viewModelScope.launch(Dispatchers.IO) {
+            searchRepository.deleteSearchItem(search)
+        }
+        loadLastSearches()
+    }
+
+
 
 }
