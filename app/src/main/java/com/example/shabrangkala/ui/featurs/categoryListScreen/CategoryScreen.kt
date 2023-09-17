@@ -36,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -57,8 +58,9 @@ import com.example.shabrangkala.ui.theme.OnNiceGreen
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
+import kotlinx.coroutines.launch
 
-@SuppressLint("SuspiciousIndentation")
+@SuppressLint("SuspiciousIndentation", "CoroutineCreationDuringComposition")
 @Composable
 fun CategoryScreen(id: Int) {
 
@@ -84,6 +86,8 @@ fun CategoryScreen(id: Int) {
     val categoryName = categoryViewModel.categoryName
     val categoryCount = categoryViewModel.categoryCount
     val pageNumber = categoryViewModel.pageNumber
+    val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
 
     var isOverlayPresented = true
     BackHandler(enabled = isOverlayPresented) {
@@ -104,11 +108,16 @@ fun CategoryScreen(id: Int) {
                 .background(
                     OnNiceGreen
                 )
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(bottom = 50.dp)
         ) {
 
             if (productsList.value.isEmpty()) {
+
+                coroutineScope.launch {
+                    scrollState.animateScrollTo(0)
+                }
+
                 EmptyProductFlowRow(cardWidth)
             } else {
 
@@ -199,6 +208,7 @@ fun CategoryScreen(id: Int) {
                 }
 
                 PageSelect(categoryCount.intValue, pageNumber) {
+                    categoryViewModel.clearProductData()
                     categoryViewModel.loadProductDataOfCategory(id)
                 }
             }

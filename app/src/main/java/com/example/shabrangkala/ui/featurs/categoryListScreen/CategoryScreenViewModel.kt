@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.model.data.repository.productRepository.ProductRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CategoryScreenViewModel(private val productRepository: ProductRepository) : ViewModel() {
@@ -21,6 +22,12 @@ class CategoryScreenViewModel(private val productRepository: ProductRepository) 
         viewModelScope.launch {
             productsData.value = productRepository.getProductsOfCertainCategory(id, pageNumber.intValue)
             Log.e("abbas22", pageNumber.intValue.toString() )
+        }
+    }
+
+    fun clearProductData(){
+        viewModelScope.launch(Dispatchers.IO) {
+            productsData.value = listOf()
         }
     }
 
