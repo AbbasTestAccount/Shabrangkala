@@ -1092,6 +1092,8 @@ fun ShopSearchBar(
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
+    showBottomBar.value = !active
+
     Box(
         Modifier
             .fillMaxSize(), contentAlignment = Alignment.CenterEnd
@@ -1108,7 +1110,6 @@ fun ShopSearchBar(
                 active = active,
                 onActiveChange = {
                     active = it
-                    showBottomBar.value = !active
                 },
                 placeholder = {
                     Text(
