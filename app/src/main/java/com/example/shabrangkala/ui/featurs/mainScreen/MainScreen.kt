@@ -920,7 +920,7 @@ fun AppTopAppBar(
 
                         IconButton(onClick = { }) {
                             Icon(
-                                imageVector = ImageVector.vectorResource(id = R.drawable.question),
+                                imageVector = ImageVector.vectorResource(id = R.drawable.account),
                                 contentDescription = null,
                                 modifier = Modifier
                                     .size(25.dp)
