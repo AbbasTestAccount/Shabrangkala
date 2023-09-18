@@ -53,6 +53,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
@@ -102,6 +103,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
+import com.example.shabrangkala.model.data.Search
 import com.example.shabrangkala.model.data.product.Product
 import com.example.shabrangkala.ui.featurs.wishListScreen.WishListScreen
 import com.example.shabrangkala.ui.featurs.wishListScreen.shimmerEffect
@@ -271,9 +273,9 @@ fun MainScreen() {
             2 -> {
                 showTopBar.value = false
                 showFab.value = false
-                SearchBarSample(mainScreenViewModel,showBottomBar){ productClicked ->
+                ShopSearchBar(mainScreenViewModel, showBottomBar) { productClicked, search ->
                     navController.navigate("$PRODUCT_SCREEN/${productClicked.id}")
-                    //todo
+                    mainScreenViewModel.addNewSearchItem(search)
                 }
             }
         }
@@ -981,7 +983,7 @@ fun FAB(scrollState: ScrollState, showFab: MutableState<Boolean>, onFabClicked: 
         }
     }
 
-    if (showFab.value){
+    if (showFab.value) {
         AnimatedVisibility(
             visible = fabVisibility
         ) {
@@ -1027,7 +1029,7 @@ fun AppBottomBar(
         }
     }
 
-    if (showBottomBar.value){
+    if (showBottomBar.value) {
         AnimatedVisibility(
             visible = closeOpenBottomBar,
             exit = shrinkVertically() + fadeOut(),
@@ -1082,7 +1084,11 @@ fun bottomNavColor(index: Int): Color {
 }
 
 @Composable
-fun SearchBarSample(mainScreenViewModel: MainScreenViewModel, showBottomBar: MutableState<Boolean>, searchItemClicked: (Product) -> Unit) {
+fun ShopSearchBar(
+    mainScreenViewModel: MainScreenViewModel,
+    showBottomBar: MutableState<Boolean>,
+    searchItemClicked: (Product, Search) -> Unit
+) {
     var text by rememberSaveable { mutableStateOf("") }
     var active by rememberSaveable { mutableStateOf(false) }
 
@@ -1101,7 +1107,7 @@ fun SearchBarSample(mainScreenViewModel: MainScreenViewModel, showBottomBar: Mut
                 active = active,
                 onActiveChange = {
                     active = it
-                    showBottomBar.value = (active != true)
+                    showBottomBar.value = !active
                 },
                 placeholder = {
                     Text(
@@ -1113,62 +1119,68 @@ fun SearchBarSample(mainScreenViewModel: MainScreenViewModel, showBottomBar: Mut
 //            trailingIcon = { Icon(Icons.Default.MoreVert, contentDescription = null) },
             ) {
                 SearchResult(text, mainScreenViewModel, searchItemClicked)
-//                repeat(6) { idx ->
-//                    val resultText = "Suggestion $idx"
-//                    ListItem(
-//                        headlineContent = { Text(resultText) },
-//                        supportingContent = { Text("Additional info") },
-//                        leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
-//                        modifier = Modifier
-//                            .clickable {
-//                                text = resultText
-//                                active = false
-//                            }
-//                            .fillMaxWidth()
-//                            .padding(horizontal = 16.dp, vertical = 4.dp)
-//                    )
-//                }
+
             }
 
         }
 
 
-        FlowRow(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(top = 72.dp)
-        ) {
-            if (mainScreenViewModel.lastSearchList.value.isEmpty()) {
-                //todo
-            } else {
-                for (it in 0..mainScreenViewModel.lastSearchList.value.size) {
+        mainScreenViewModel.loadLastSearches()
 
-                    AssistChip(
-                        onClick = {
-                            active = true
-                            text = mainScreenViewModel.lastSearchList.value[it].name
-                        },
-                        label = {
-                            Text(
-                                text = mainScreenViewModel.lastSearchList.value[it].name
+
+        Column( modifier = Modifier.fillMaxWidth().padding(top = 72.dp)) {
+            Divider(thickness = 1.dp, color = HeavyGreen)
+
+            FlowRow(
+                verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight().padding(top = 10.dp),
+                maxItemsInEachRow = 2,
+
+
+            ) {
+                if (mainScreenViewModel.lastSearchList.value.isEmpty()) {
+                    //todo
+                } else {
+                    for (it in 0 until mainScreenViewModel.lastSearchList.value.size) {
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                            AssistChip(
+                                onClick = {
+                                    active = true
+                                    text = mainScreenViewModel.lastSearchList.value[it].name
+                                },
+                                label = {
+                                    Text(
+                                        text = mainScreenViewModel.lastSearchList.value[it].name,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.fillMaxWidth()
+                                    )
+                                },
+                                border = AssistChipDefaults.assistChipBorder(borderColor = HeavyGreen),
+                                modifier = Modifier
+                                    .fillMaxWidth(0.4f)
+                                    .height(40.dp)
+                                    .padding(bottom = 10.dp),
+                                colors = AssistChipDefaults.assistChipColors(containerColor = OnNiceGreen)
                             )
-                        },
-                        border = AssistChipDefaults.assistChipBorder(borderColor = LiteNiceGreen),
-                        modifier = Modifier
-                            .fillMaxWidth(0.4f),
-                        colors = AssistChipDefaults.assistChipColors(containerColor = OnNiceGreen)
-                    )
-                    Spacer(modifier = Modifier.width(5.dp))
+
+                        }
+                    }
                 }
             }
-
-
         }
+
     }
 }
 
 @Composable
-fun SearchResult(text: String, mainScreenViewModel: MainScreenViewModel, searchItemClicked: (Product) -> Unit) {
+fun SearchResult(
+    text: String,
+    mainScreenViewModel: MainScreenViewModel,
+    searchItemClicked: (Product, Search) -> Unit
+) {
     mainScreenViewModel.getProductListByNameSearch(text)
 
     if (text.isEmpty()) {
@@ -1189,7 +1201,12 @@ fun SearchResult(text: String, mainScreenViewModel: MainScreenViewModel, searchI
                             .height(80.dp),
                         colors = CardDefaults.cardColors(containerColor = LiteNiceGreen),
                         border = BorderStroke(1.dp, HeavyGreen),
-                        onClick = {searchItemClicked(mainScreenViewModel.searchListByName.value[index])}
+                        onClick = {
+                            searchItemClicked(
+                                mainScreenViewModel.searchListByName.value[index],
+                                Search(text, mainScreenViewModel.searchListByName.value.size)
+                            )
+                        }
                     ) {
                         Row(
                             modifier = Modifier
@@ -1207,7 +1224,7 @@ fun SearchResult(text: String, mainScreenViewModel: MainScreenViewModel, searchI
                                 modifier = Modifier.padding(start = 15.dp)
                             ) {
                                 Text(
-                                    text = (index+1).toString(),
+                                    text = (index + 1).toString(),
                                     modifier = Modifier
                                         .size(25.dp)
                                         .background(HeavyGreen, CircleShape)
