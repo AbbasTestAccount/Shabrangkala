@@ -35,6 +35,7 @@ import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -65,6 +66,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.shabrangkala.R
 import com.example.shabrangkala.model.data.ProductToSaveInCartList
@@ -91,7 +93,7 @@ fun CartScreen() {
 
 
 
-    Scaffold(topBar = { CartTopBar() }, snackbarHost = { SnackbarHost(snackbarHostState) }) {
+    Scaffold(topBar = { CartTopBar(navController) }, snackbarHost = { SnackbarHost(snackbarHostState) }) {
         Box(modifier = Modifier.fillMaxSize()) {
 
 
@@ -236,7 +238,7 @@ fun BottomContent(openBottomSheet: MutableState<Boolean>) {
 }
 
 @Composable
-fun CartTopBar() {
+fun CartTopBar(navController: NavHostController) {
     Column(modifier = Modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
@@ -249,11 +251,13 @@ fun CartTopBar() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.back),
-                    contentDescription = "back",
-                    Modifier.padding(start = 10.dp)
-                )
+                IconButton(onClick = { navController.popBackStack() } , Modifier.padding(start = 10.dp)) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.back),
+                        contentDescription = "back",
+
+                    )
+                }
                 Text(text = "Cart Page", fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.width(10.dp))
 
