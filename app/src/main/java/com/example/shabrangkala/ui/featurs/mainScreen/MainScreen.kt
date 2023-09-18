@@ -1098,6 +1098,7 @@ fun ShopSearchBar(
     ) {
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             SearchBar(
+
                 colors = SearchBarDefaults.colors(containerColor = NiceGreen),
                 modifier = Modifier
                     .align(Alignment.TopCenter),
@@ -1144,7 +1145,7 @@ fun ShopSearchBar(
                 if (mainScreenViewModel.lastSearchList.value.isEmpty()) {
                     //todo
                 } else {
-                    for (it in 0 until mainScreenViewModel.lastSearchList.value.size) {
+                    for (it in mainScreenViewModel.lastSearchList.value.size-1 downTo  0 ) {
                         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                             AssistChip(
                                 onClick = {
