@@ -2,7 +2,9 @@
 
 package com.example.shabrangkala.ui.featurs.signUpScreen
 
+import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -35,11 +37,14 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -55,9 +60,11 @@ import com.example.shabrangkala.ui.theme.MediumGray
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.utils.SIGN_UP_SIGN_IN
 import com.example.shabrangkala.utils.TEXT_FIELD_ICON_SIZE
+import com.example.shabrangkala.utils.rememberImeState
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
     val context = LocalContext.current
@@ -69,6 +76,18 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
     val phoneNumber = viewModel.phoneNumber.observeAsState("")
     val password = viewModel.password.observeAsState("")
     val confirmPassword = viewModel.confirmPassword.observeAsState("")
+
+    val imeState = rememberImeState()
+    val scrollState = rememberScrollState()
+    val needScroll = remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(key1 = imeState.value, key2 = needScroll.value) {
+        if (imeState.value && needScroll.value) {
+            scrollState.animateScrollTo(scrollState.maxValue, tween(500))
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -90,7 +109,7 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
             .fillMaxHeight()
             .fillMaxWidth(0.9f)
             .padding(top = 20.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
 
@@ -137,7 +156,8 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
                 userName.value,
                 "Username",
                 R.drawable.person,
-                keyboardType = KeyboardType.Text
+                keyboardType = KeyboardType.Text,
+                needScroll
             ) {
                 viewModel.userName.value = it
             }
@@ -146,7 +166,8 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
                 input = email.value,
                 text = "Email",
                 icon = R.drawable.at_sign,
-                keyboardType = KeyboardType.Email
+                keyboardType = KeyboardType.Email,
+                needScroll = needScroll
             ) {
                 viewModel.email.value = it
             }
@@ -155,7 +176,8 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
                 input = phoneNumber.value,
                 text = "Phone number",
                 icon = R.drawable.phone,
-                keyboardType = KeyboardType.Phone
+                keyboardType = KeyboardType.Phone,
+                needScroll = needScroll
             ) {
                 viewModel.phoneNumber.value = it
             }
@@ -164,7 +186,8 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
                 input = password.value,
                 text = "Password",
                 icon = R.drawable.password,
-                keyboardType = KeyboardType.Password
+                keyboardType = KeyboardType.Password,
+                needScroll = needScroll
             ) {
                 viewModel.password.value = it
             }
@@ -173,7 +196,8 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
                 input = confirmPassword.value,
                 text = "Confirm password",
                 icon = R.drawable.lock,
-                keyboardType = KeyboardType.Password
+                keyboardType = KeyboardType.Password,
+                needScroll = needScroll
             ) {
                 viewModel.confirmPassword.value = it
             }
@@ -194,7 +218,7 @@ fun SignUpScreen(onSignUpClicked: (User) -> Unit) {
                         phoneNumber = phoneNumber.value,
                         password = password.value,
                         listOfOrders = arrayListOf()
-                        )
+                    )
                 )
             }) {
             Text(text = "Create an account", modifier = Modifier.padding(10.dp))
@@ -269,6 +293,7 @@ fun SignTextField(
     text: String,
     icon: Int,
     keyboardType: KeyboardType,
+    needScroll: MutableState<Boolean>,
     onValueChanged: (String) -> Unit
 ) {
     val seePassword = if (text == "Confirm password" || text == "Password") {
@@ -288,7 +313,13 @@ fun SignTextField(
     ) {
         TextField(
             modifier = Modifier
-                .fillMaxWidth(0.9f),
+                .fillMaxWidth(0.9f)
+                .onFocusChanged { focusState ->
+                    if (focusState.isFocused && (text == "Email" || text == "Username")) {
+                        needScroll.value = false
+                    } else needScroll.value = focusState.isFocused
+
+                },
             value = input,
             onValueChange = { onValueChanged(it) },
             label = { Text(text) },

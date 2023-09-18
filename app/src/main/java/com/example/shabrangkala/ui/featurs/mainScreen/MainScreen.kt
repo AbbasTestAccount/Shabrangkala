@@ -152,7 +152,7 @@ fun MainScreen() {
 
     Scaffold(
         topBar = { AppTopAppBar(showTopBar, scrollState, navController) },
-        floatingActionButton = { FAB(scrollState, showFab) { onFabClicked(context) } },
+        floatingActionButton = { FAB(scrollState, showFab) { onFabClicked(navController) } },
         bottomBar = { AppBottomBar(scrollState, selectedItem, bottomList, showBottomBar) }) {
 
         when (selectedItem.intValue) {
@@ -880,8 +880,8 @@ fun TitlePiece(title: String) {
     }
 }
 
-fun onFabClicked(context: Context) {
-    Toast.makeText(context, "clicked", Toast.LENGTH_SHORT).show()
+fun onFabClicked(navController: NavHostController) {
+    navController.navigate(CART_SCREEN)
 }
 
 

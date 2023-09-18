@@ -2,7 +2,9 @@
 
 package com.example.shabrangkala.ui.featurs.logInScreen
 
+import android.annotation.SuppressLint
 import android.widget.Toast
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,7 +34,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,9 +52,11 @@ import com.example.shabrangkala.ui.theme.LiteNiceGreen
 import com.example.shabrangkala.ui.theme.MediumGray
 import com.example.shabrangkala.ui.theme.NiceGreen
 import com.example.shabrangkala.utils.SIGN_UP_SIGN_IN
+import com.example.shabrangkala.utils.rememberImeState
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun LogInScreen(onLoginClicked: (Pair<String, String>) -> Unit) {
     val context = LocalContext.current
@@ -59,6 +65,15 @@ fun LogInScreen(onLoginClicked: (Pair<String, String>) -> Unit) {
 
     val userName = viewModel.userName.observeAsState("")
     val password = viewModel.password.observeAsState("")
+
+    val imeState = rememberImeState()
+    val scrollState = rememberScrollState()
+
+    LaunchedEffect(key1 = imeState.value) {
+        if (imeState.value){
+            scrollState.animateScrollTo(scrollState.maxValue, tween(500))
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -80,7 +95,7 @@ fun LogInScreen(onLoginClicked: (Pair<String, String>) -> Unit) {
             .fillMaxHeight()
             .fillMaxWidth(0.9f)
             .padding(top = 20.dp)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top,
 
@@ -127,7 +142,8 @@ fun LogInScreen(onLoginClicked: (Pair<String, String>) -> Unit) {
                 userName.value,
                 "Username",
                 R.drawable.person,
-                keyboardType = KeyboardType.Text
+                keyboardType = KeyboardType.Text,
+                needScroll = mutableStateOf(true)
             ) {
                 viewModel.userName.value = it
             }
@@ -136,7 +152,8 @@ fun LogInScreen(onLoginClicked: (Pair<String, String>) -> Unit) {
                 input = password.value,
                 text = "Password",
                 icon = R.drawable.password,
-                keyboardType = KeyboardType.Password
+                keyboardType = KeyboardType.Password,
+                needScroll = mutableStateOf(true)
             ) {
                 viewModel.password.value = it
             }
