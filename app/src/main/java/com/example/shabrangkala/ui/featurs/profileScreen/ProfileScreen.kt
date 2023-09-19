@@ -27,7 +27,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
@@ -89,6 +91,8 @@ fun ProfileHeader(progress: Float, navController: NavHostController) {
         val color = if (progress == 1f) Color(0xFFFFFFFF) else properties.value.color("background")
         val boxBackground = motionProperties(id = "box")
         val usernameProperties = motionProperties(id = "username")
+        val editIconProperties = motionProperties(id = "edit_icon")
+        val backIconProperties = motionProperties(id = "back_icon")
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -96,8 +100,25 @@ fun ProfileHeader(progress: Float, navController: NavHostController) {
                 .layoutId("box")
         )
 
-        IconButton(onClick = {navController.popBackStack()}, modifier = Modifier.layoutId("back_icon")) {
-            Icon(painter = painterResource(id = R.drawable.back), contentDescription = "back", modifier = Modifier.size(24.dp))
+        IconButton(onClick = {}, modifier = Modifier.layoutId("edit_icon")) {
+            Icon(
+                painter = painterResource(id = R.drawable.edit),
+                contentDescription = "edit_profile",
+                modifier = Modifier.size(24.dp),
+                tint = editIconProperties.value.color("background")
+            )
+        }
+
+        IconButton(
+            onClick = { navController.popBackStack() },
+            modifier = Modifier.layoutId("back_icon")
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.back),
+                contentDescription = "back",
+                modifier = Modifier.size(24.dp),
+                tint = editIconProperties.value.color("background")
+            )
         }
 
         Image(

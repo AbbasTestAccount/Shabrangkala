@@ -1,10 +1,21 @@
 {
   ConstraintSets: {
     end: {
+      edit_icon: {
+        end: ['parent', 'end', 8],
+        top: ['profile_pic', 'top'],
+        visibility: 'invisible',
+        custom: {
+          background: '#000000'
+        }
+      },
       back_icon: {
         start: ['parent', 'start', 8],
         top: ['profile_pic', 'top'],
-        bottom: ['profile_pic', 'bottom']
+        bottom: ['profile_pic', 'bottom'],
+        custom: {
+          background: '#000000'
+        }
       },
       profile_pic: {
         width: 40,
@@ -62,18 +73,29 @@
           -16
         ],
         custom: {
-          background: '#49A250'
+          background: '#5FD068'
         }
       }
     },
     start: {
+      edit_icon: {
+        end: ['parent', 'end', 8],
+        top: ['profile_pic', 'top'],
+        visibility: 'visible',
+        custom: {
+          background: '#FFFFFF'
+        }
+      },
       back_icon: {
         start: ['parent', 'start', 8],
         top: ['profile_pic', 'top'],
+        custom: {
+          background: '#FFFFFF'
+        }
       },
       profile_pic: {
-        width: 150,
-        height: 150,
+        width: 100,
+        height: 100,
         start: [
           'parent',
           'start'
@@ -130,7 +152,7 @@
           -16
         ],
         custom: {
-          background: '#5FD068'
+          background: '#49A250'
         }
       }
     }
