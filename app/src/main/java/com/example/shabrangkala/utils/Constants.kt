@@ -15,6 +15,7 @@ const val PRODUCT_SCREEN = "productScreen"
 const val BLOG_SCREEN = "BlogScreen"
 const val CATEGORY_LIST_SCREEN = "CategoryListScreen"
 const val CART_SCREEN = "Cart Screen"
+const val PROFILE_SCREEN = "Profile Screen"
 
 
 val EMPTY_PRODUCT = Product(

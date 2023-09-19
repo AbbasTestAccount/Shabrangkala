@@ -9,6 +9,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -105,6 +106,7 @@ import coil.compose.AsyncImage
 import com.example.shabrangkala.R
 import com.example.shabrangkala.model.data.Search
 import com.example.shabrangkala.model.data.product.Product
+import com.example.shabrangkala.ui.featurs.profileScreen.ProfileScreen
 import com.example.shabrangkala.ui.featurs.wishListScreen.WishListScreen
 import com.example.shabrangkala.ui.featurs.wishListScreen.shimmerEffect
 import com.example.shabrangkala.ui.theme.HeavyGreen
@@ -116,6 +118,7 @@ import com.example.shabrangkala.utils.BLOG_SCREEN
 import com.example.shabrangkala.utils.CART_SCREEN
 import com.example.shabrangkala.utils.CATEGORY_LIST_SCREEN
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
+import com.example.shabrangkala.utils.PROFILE_SCREEN
 import dev.burnoo.cokoin.navigation.getNavController
 import dev.burnoo.cokoin.navigation.getNavViewModel
 import kotlinx.coroutines.launch
@@ -918,7 +921,7 @@ fun AppTopAppBar(
                     )
                     {
 
-                        IconButton(onClick = { }) {
+                        IconButton(onClick = { navController.navigate(PROFILE_SCREEN)}) {
                             Icon(
                                 imageVector = ImageVector.vectorResource(id = R.drawable.account),
                                 contentDescription = null,
@@ -1130,7 +1133,9 @@ fun ShopSearchBar(
         mainScreenViewModel.loadLastSearches()
 
 
-        Column( modifier = Modifier.fillMaxWidth().padding(top = 72.dp)) {
+        Column( modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 72.dp)) {
             Divider(thickness = 1.dp, color = HeavyGreen)
 
             FlowRow(
@@ -1138,7 +1143,8 @@ fun ShopSearchBar(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight().padding(top = 10.dp),
+                    .fillMaxHeight()
+                    .padding(top = 10.dp),
                 maxItemsInEachRow = 2,
 
 

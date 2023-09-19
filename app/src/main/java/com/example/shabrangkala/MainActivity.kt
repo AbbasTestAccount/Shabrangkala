@@ -27,6 +27,7 @@ import com.example.shabrangkala.ui.featurs.categoryListScreen.CategoryScreen
 import com.example.shabrangkala.ui.featurs.logInScreen.LogInScreen
 import com.example.shabrangkala.ui.featurs.mainScreen.MainScreen
 import com.example.shabrangkala.ui.featurs.productScreen.ProductScreen
+import com.example.shabrangkala.ui.featurs.profileScreen.ProfileScreen
 import com.example.shabrangkala.ui.featurs.signUpScreen.SignUpScreen
 import com.example.shabrangkala.ui.theme.ShabrangkalaTheme
 import com.example.shabrangkala.utils.BLOG_SCREEN
@@ -36,6 +37,7 @@ import com.example.shabrangkala.utils.LOG_IN
 import com.example.shabrangkala.utils.MAIN_SCREEN
 import com.example.shabrangkala.utils.ON_BOARDING
 import com.example.shabrangkala.utils.PRODUCT_SCREEN
+import com.example.shabrangkala.utils.PROFILE_SCREEN
 import com.example.shabrangkala.utils.SIGN_UP
 import com.example.shabrangkala.utils.SIGN_UP_SIGN_IN
 import com.example.shabrangkala.utils.START
@@ -174,6 +176,10 @@ fun ShabrangkalaUI(mainActivityViewModel: MainActivityViewModel) {
 
         composable(route = CART_SCREEN) {
             CartScreen()
+        }
+
+        composable(route = PROFILE_SCREEN){
+            ProfileScreen()
         }
     }
 
