@@ -3,18 +3,21 @@
 package com.example.shabrangkala.ui.featurs.profileScreen
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
@@ -24,24 +27,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import androidx.constraintlayout.compose.layoutId
+import androidx.navigation.NavHostController
 import com.example.shabrangkala.R
-import com.example.shabrangkala.ui.theme.HeavyGreen
+import dev.burnoo.cokoin.navigation.getNavController
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun ProfileScreen() {
 
     val scrollState = rememberScrollState()
+    val navController = getNavController()
+
     val motionProgress = mutableFloatStateOf(
-        if (scrollState.value < 1000) {
-            (scrollState.value.toFloat() / 1000)
+        if (scrollState.value < 600) {
+            (scrollState.value.toFloat() / 600)
         } else {
             1f
         }
@@ -52,25 +56,23 @@ fun ProfileScreen() {
             modifier = Modifier
                 .verticalScroll(scrollState)
                 .fillMaxWidth()
-                .padding(top = 80.dp)
+                .padding(top = 72.dp)
         ) {
 
-            Text(text = "Profile Screen")
-
+            Spacer(Modifier.height(138.dp))
             for (i in 0..40) {
                 Text(text = i.toString(), Modifier.size(40.dp))
             }
         }
 
 
-        Log.e("abbas", ((scrollState.value.toFloat())).toString())
-        ProfileHeader(motionProgress.floatValue)
+        ProfileHeader(motionProgress.floatValue, navController)
     }
 }
 
 
 @Composable
-fun ProfileHeader(progress: Float) {
+fun ProfileHeader(progress: Float, navController: NavHostController) {
     val context = LocalContext.current
     val motionScene = remember {
         context.resources
@@ -93,6 +95,11 @@ fun ProfileHeader(progress: Float) {
                 .background(boxBackground.value.color("background"))
                 .layoutId("box")
         )
+
+        IconButton(onClick = {navController.popBackStack()}, modifier = Modifier.layoutId("back_icon")) {
+            Icon(painter = painterResource(id = R.drawable.back), contentDescription = "back", modifier = Modifier.size(24.dp))
+        }
+
         Image(
             painter = painterResource(id = R.drawable.person),
             contentDescription = null,
