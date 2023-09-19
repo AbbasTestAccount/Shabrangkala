@@ -102,5 +102,9 @@ dependencies {
     // Room
     kapt "androidx.room:room-compiler:2.5.2"
 
+    // constraint layout and used for motion layout
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
+
+
 
 }
